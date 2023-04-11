@@ -52,7 +52,8 @@
 				"bmewburn.vscode-intelephense-client",
 				"esbenp.prettier-vscode",
 				"Vue.volar",
-				"Cardinal90.multi-cursor-case-preserve"
+				"Cardinal90.multi-cursor-case-preserve",
+				"Vue.vscode-typescript-vue-plugin"
 			],
             "settings": {}
         }
