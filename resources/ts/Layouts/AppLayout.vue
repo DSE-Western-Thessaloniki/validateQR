@@ -64,6 +64,16 @@ const logout = () => {
                                     Πίνακας ελέγχου
                                 </NavLink>
                             </div>
+                            <div
+                                class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex"
+                            >
+                                <NavLink
+                                    :href="route('documentGroups')"
+                                    :active="route().current('documentGroups')"
+                                >
+                                    Ομάδες εγγράφων
+                                </NavLink>
+                            </div>
                         </div>
 
                         <div class="hidden sm:flex sm:items-center sm:ml-6">
@@ -265,13 +275,13 @@ const logout = () => {
                                         <div
                                             class="block px-4 py-2 text-xs text-gray-400"
                                         >
-                                            Manage Account
+                                            Διαχείριση Λογαριασμού
                                         </div>
 
                                         <DropdownLink
                                             :href="route('profile.show')"
                                         >
-                                            Profile
+                                            Προφίλ
                                         </DropdownLink>
 
                                         <DropdownLink
@@ -289,7 +299,7 @@ const logout = () => {
                                         <!-- Authentication -->
                                         <form @submit.prevent="logout">
                                             <DropdownLink as="button">
-                                                Log Out
+                                                Αποσύνδεση
                                             </DropdownLink>
                                         </form>
                                     </template>
@@ -392,7 +402,7 @@ const logout = () => {
                                 :href="route('profile.show')"
                                 :active="route().current('profile.show')"
                             >
-                                Profile
+                                Προφίλ
                             </ResponsiveNavLink>
 
                             <ResponsiveNavLink
@@ -406,7 +416,7 @@ const logout = () => {
                             <!-- Authentication -->
                             <form method="POST" @submit.prevent="logout">
                                 <ResponsiveNavLink as="button">
-                                    Log Out
+                                    Αποσύνδεση
                                 </ResponsiveNavLink>
                             </form>
 

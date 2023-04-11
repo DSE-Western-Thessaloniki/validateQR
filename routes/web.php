@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DocumentGroupController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -32,4 +33,8 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
+    Route::get('/documentGroups', [DocumentGroupController::class, 'index'])->name('documentGroups');
+    Route::get('/users', function () {
+        return Inertia::render('Users');
+    })->name('users');
 });

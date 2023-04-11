@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreDocumentGroupRequest;
 use App\Http\Requests\UpdateDocumentGroupRequest;
 use App\Models\DocumentGroup;
+use Inertia\Inertia;
 
 class DocumentGroupController extends Controller
 {
@@ -13,7 +14,11 @@ class DocumentGroupController extends Controller
      */
     public function index()
     {
-        //
+        $groups = DocumentGroup::all();
+        
+        return Inertia::render('DocumentGroups', [
+            'groups', $groups
+        ]);
     }
 
     /**

@@ -6,11 +6,20 @@ import {
     faFileContract,
     faBoxArchive,
     faUsers,
+    faLayerGroup,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { Link } from "@inertiajs/vue3";
+import route from "ziggy-js";
 
-library.add(faHouse, faFileArrowUp, faFileContract, faBoxArchive, faUsers);
+library.add(
+    faHouse,
+    faFileArrowUp,
+    faFileContract,
+    faBoxArchive,
+    faUsers,
+    faLayerGroup
+);
 </script>
 
 <template>
@@ -34,7 +43,17 @@ library.add(faHouse, faFileArrowUp, faFileContract, faBoxArchive, faUsers);
         <div
             class="bg-gray-200 bg-opacity-25 grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 p-6 lg:p-8"
         >
-            <Link href="">
+            <Link :href="route('documentGroups')">
+                <div
+                    class="flex flex-col items-center bg-white shadow p-4 rounded-md hover:shadow-lg"
+                >
+                    <div>
+                        <font-awesome-icon :icon="faLayerGroup" size="2xl" />
+                    </div>
+                    <div class="mt-2">Ομάδες εγγράφων</div>
+                </div>
+            </Link>
+            <!-- <Link href="">
                 <div
                     class="flex flex-col items-center bg-white shadow p-4 rounded-md hover:shadow-lg"
                 >
@@ -43,8 +62,8 @@ library.add(faHouse, faFileArrowUp, faFileContract, faBoxArchive, faUsers);
                     </div>
                     <div class="mt-2">Αρχείο ολοκληρωμένων ενεργειών</div>
                 </div>
-            </Link>
-            <Link href="">
+            </Link> -->
+            <!-- <Link href="">
                 <div
                     class="flex flex-col items-center bg-white shadow p-4 rounded-md hover:shadow-lg"
                 >
@@ -63,7 +82,7 @@ library.add(faHouse, faFileArrowUp, faFileContract, faBoxArchive, faUsers);
                     </div>
                     <div class="mt-2">Ανέβασμα υπογεγραμμένων εγγράφων</div>
                 </div>
-            </Link>
+            </Link> -->
             <Link href="">
                 <div
                     class="flex flex-col items-center bg-white shadow p-4 rounded-md hover:shadow-lg"
