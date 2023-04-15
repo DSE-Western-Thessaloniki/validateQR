@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('document_groups', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
+            $table->ulid('user_id');
             $table->string('name');
+            $table->unsignedInteger('step');
             $table->timestamps();
         });
     }
