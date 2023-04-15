@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import AppLayout from "@/Layouts/AppLayout.vue";
 import DocumentGroupItem from "@/Components/DocumentGroup/DocumentGroupItem.vue";
+import Pagination from "@/Components/Pagination.vue";
+import type { Pagination as PaginationProps } from "@/pagination.d.ts";
+import { Link } from "@inertiajs/vue3";
 
 const props = defineProps<{
-    groups: Array<DocumentGroup>;
+    groups: PaginationProps<DocumentGroup>;
 }>();
 </script>
 
@@ -15,14 +18,22 @@ const props = defineProps<{
             </h2>
         </template>
 
-        <div class="py-12">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg">
-                    <div v-for="group in groups" class="p-6">
-                        <DocumentGroupItem :group="group" />
-                    </div>
-                </div>
+        <div class="py-12 flex flex-col">
+            <div v-for="(group, index) in groups.data">
+                <DocumentGroupItem
+                    :group="group"
+                    :index="groups.from + index - 1"
+                    :step="group.step"
+                />
             </div>
+            <Pagination
+                :from="groups.from"
+                :to="groups.to"
+                :total="groups.total"
+                :links="groups.links"
+                v-if="groups.next_page_url !== groups.prev_page_url"
+                class="mt-3"
+            ></Pagination>
         </div>
     </AppLayout>
 </template>

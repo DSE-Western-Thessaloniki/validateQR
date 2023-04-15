@@ -14,10 +14,12 @@ class DocumentGroupController extends Controller
      */
     public function index()
     {
-        $groups = DocumentGroup::all();
-        
+        $groups = DocumentGroup::select(['name', 'step'])
+            ->withCount('documents')
+            ->paginate();
+
         return Inertia::render('DocumentGroups', [
-            'groups', $groups
+            'groups' => $groups
         ]);
     }
 
