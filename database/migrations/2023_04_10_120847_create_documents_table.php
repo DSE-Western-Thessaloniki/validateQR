@@ -15,6 +15,8 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->unsignedBigInteger('document_group_id');
             $table->string('filename');
+            $table->unsignedInteger('state')
+                ->comment('0 - αρχική έκδοση, 1 - με QR, 2 - QR και ψηφιακή υπογραφή');
             $table->timestamps();
         });
     }
