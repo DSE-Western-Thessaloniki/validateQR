@@ -18,6 +18,7 @@ class DocumentFactory extends Factory
     {
         return [
             'filename' => "{$this->faker->sentence()}.pdf",
+            'state' => $this->faker->numberBetween(0, 2)
         ];
     }
 }
