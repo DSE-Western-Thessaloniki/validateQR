@@ -20,8 +20,7 @@ class DocumentGroupController extends Controller
             $filter = '';
         }
 
-        $groups = DocumentGroup::select(['id', 'name', 'step'])
-            ->when($filter, function($query) use ($filter) {
+        $groups = DocumentGroup::when($filter, function($query) use ($filter) {
             $query->where('name', 'like', "%{$filter}%");
         })
             ->withCount('documents')
