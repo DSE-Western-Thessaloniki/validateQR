@@ -39,8 +39,9 @@ watch(
                         Φίλτρο:
                     </label>
                     <input
-                        class="transition ease-in-out hover:border-blue-500 ring-blue-500 hover:inset-ring hover:ring-1 focus:border-blue-500"
-                        type="text"
+                        class="transition ease-in-out hover:border-blue-500 ring-blue-500 hover:inset-ring hover:ring-1 focus:border-blue-500 placeholder:italic placeholder:text-slate-400"
+                        :class="filter ? 'bg-sky-200' : ''"
+                        type="search"
                         name="filter"
                         v-model="filter"
                         placeholder="Όνομα ομάδας"
