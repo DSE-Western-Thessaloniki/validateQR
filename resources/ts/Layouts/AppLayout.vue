@@ -508,9 +508,23 @@ const logout = () => {
             </header>
 
             <!-- Page Content -->
-            <main>
-                <slot />
-            </main>
+            <Transition name="fade" mode="out-in" appear>
+                <main :key="$page.url">
+                    <slot />
+                </main>
+            </Transition>
         </div>
     </div>
 </template>
+
+<style>
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
+</style>
