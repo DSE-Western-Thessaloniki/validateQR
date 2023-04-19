@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { defineProps } from "vue";
 import DocumentGroupStatus from "@/Components/DocumentGroup/DocumentGroupStatus.vue";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faPencil, faTrash } from "@fortawesome/free-solid-svg-icons";
@@ -30,12 +29,12 @@ const props = defineProps<{
                 class="py-2 px-5"
             ></DocumentGroupStatus>
             <div
-                class="bg-amber-400 px-3 py-2 mx-2 rounded-md shadow-sm hover:shadow-xl hover:bg-amber-300 hover:-translate-y-0.5"
+                class="transition ease-in-out duration-300 bg-amber-400 px-3 py-2 mx-2 rounded-md shadow-sm hover:shadow-xl hover:bg-amber-300 hover:-translate-y-0.5"
             >
                 <font-awesome-icon :icon="faPencil" size="1x" />
             </div>
             <div
-                class="bg-red-500 px-3 py-2 mx-2 rounded-md shadow-sm hover:shadow-xl hover:bg-red-400 hover:-translate-y-0.5"
+                class="transition ease-in-out duration-300 bg-red-500 px-3 py-2 mx-2 rounded-md shadow-sm hover:shadow-xl hover:bg-red-400 hover:-translate-y-0.5"
             >
                 <font-awesome-icon :icon="faTrash" size="1x" />
             </div>
