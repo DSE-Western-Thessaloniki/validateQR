@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreDocumentGroupRequest;
 use App\Http\Requests\UpdateDocumentGroupRequest;
 use App\Models\DocumentGroup;
+use Illuminate\Support\Facades\Request;
 use Inertia\Inertia;
 
 class DocumentGroupController extends Controller
@@ -14,12 +15,23 @@ class DocumentGroupController extends Controller
      */
     public function index()
     {
-        $groups = DocumentGroup::select(['name', 'step'])
+        $filter = Request::input('filter');
+        if (!is_string($filter)) {
+            $filter = '';
+        }
+
+        $groups = DocumentGroup::select(['id', 'name', 'step'])
+            ->when($filter, function($query) use ($filter) {
+            $query->where('name', 'like', "%{$filter}%");
+        })
             ->withCount('documents')
             ->paginate();
 
         return Inertia::render('DocumentGroups', [
-            'groups' => $groups
+            'groups' => $groups,
+            'filters' => [
+                'filter' => $filter,
+            ]
         ]);
     }
 
