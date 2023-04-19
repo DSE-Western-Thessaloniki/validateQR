@@ -16,6 +16,7 @@ return new class extends Migration
             $table->ulid('user_id');
             $table->string('name');
             $table->unsignedInteger('step');
+            $table->unsignedTinyInteger('published');
             $table->timestamps();
         });
     }

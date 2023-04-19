@@ -19,6 +19,7 @@ class DocumentGroupFactory extends Factory
         return [
             'name' => $this->faker->sentence(),
             'step' => $this->faker->numberBetween(1, 5),
+            'published' => $this->faker->boolean(),
         ];
     }
 }
