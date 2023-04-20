@@ -2,10 +2,13 @@
 import DocumentGroupStatus from "@/Components/DocumentGroup/DocumentGroupStatus.vue";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faPencil, faTrash } from "@fortawesome/free-solid-svg-icons";
-import { faCircleCheck } from "@fortawesome/free-regular-svg-icons";
+import {
+    faCircleCheck,
+    faCircleXmark,
+} from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
-library.add(faPencil, faTrash, faCircleCheck);
+library.add(faPencil, faTrash, faCircleCheck, faCircleXmark);
 
 const props = defineProps<{
     group: DocumentGroup;
@@ -48,7 +51,7 @@ const publishedText = published ? "text-green-700" : "text-orange-700";
                     class="py-2 px-5"
                 ></DocumentGroupStatus>
                 <div
-                    class="transition ease-in-out duration-300 px-3 py-2 mx-2 rounded-md hover:shadow-xl hover:bg-amber-400 hover:-translate-y-0.5"
+                    class="transition ease-in-out duration-300 px-3 py-2 mx-2 rounded-md hover:shadow-xl hover:bg-sky-300 hover:-translate-y-0.5"
                 >
                     <font-awesome-icon :icon="faPencil" size="1x" />
                 </div>
@@ -63,7 +66,10 @@ const publishedText = published ? "text-green-700" : "text-orange-700";
                         published ? 'hover:bg-orange-300' : 'hover:bg-green-300'
                     "
                 >
-                    <font-awesome-icon :icon="faCircleCheck" size="1x" />
+                    <font-awesome-icon
+                        :icon="published ? faCircleXmark : faCircleCheck"
+                        size="1x"
+                    />
                 </div>
             </div>
             <div
