@@ -33,7 +33,7 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
-    Route::get('/documentGroups', [DocumentGroupController::class, 'index'])->name('documentGroups');
+    Route::resource('documentGroup', DocumentGroupController::class);
     Route::get('/users', function () {
         return Inertia::render('Users');
     })->name('users');
