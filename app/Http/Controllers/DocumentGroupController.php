@@ -26,7 +26,7 @@ class DocumentGroupController extends Controller
             ->withCount('documents')
             ->paginate();
 
-        return Inertia::render('DocumentGroups', [
+        return Inertia::render('DocumentGroup/List', [
             'groups' => $groups,
             'filters' => [
                 'filter' => $filter,
@@ -39,7 +39,7 @@ class DocumentGroupController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('DocumentGroup/Create');
     }
 
     /**
