@@ -3,10 +3,15 @@ import AppLayout from "@/Layouts/AppLayout.vue";
 import DocumentGroupItem from "@/Components/DocumentGroup/DocumentGroupItem.vue";
 import Pagination from "@/Components/Pagination.vue";
 import type { Pagination as PaginationProps } from "@/pagination.d.ts";
-import { router } from "@inertiajs/vue3";
+import { router, Link } from "@inertiajs/vue3";
 import { ref, watch } from "vue";
 import route from "ziggy-js";
 import debounce from "lodash/debounce";
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+
+library.add(faPlus);
 
 const props = defineProps<{
     groups: PaginationProps<DocumentGroup>;
@@ -50,7 +55,16 @@ watch(
             </div>
         </template>
 
-        <div class="py-12 flex flex-col">
+        <div class="py-6 flex flex-col">
+            <div class="ml-5 p-3">
+                <Link
+                    :href="route('documentGroup.create')"
+                    class="p-3 bg-blue-500 rounded"
+                >
+                    <FontAwesomeIcon :icon="faPlus" />
+                    Δημιουργία νέας ομάδας
+                </Link>
+            </div>
             <TransitionGroup name="list" tag="div">
                 <div v-for="(group, index) in groups.data" :key="group.id">
                     <DocumentGroupItem
