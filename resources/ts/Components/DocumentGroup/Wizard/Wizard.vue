@@ -50,7 +50,7 @@ function setStep(step: number) {
     <div class="m-4 px-4 font-bold underline">
         Οδηγός δημιουργίας ομάδας εγγράφων
     </div>
-    <StepCounter></StepCounter>
+    <StepCounter :totalSteps="5" :currentStep="1"></StepCounter>
     <component :is="currentComponent"></component>
     <div class="flex flex-row m-4">
         <button

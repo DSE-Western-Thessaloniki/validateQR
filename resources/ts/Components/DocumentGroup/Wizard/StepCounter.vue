@@ -1,3 +1,48 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { ref } from "vue";
 
-<template></template>
+const props = defineProps<{
+    totalSteps: number;
+    currentStep: number;
+}>();
+
+const currentStep = ref(props.currentStep);
+
+function setStep(step: number) {
+    currentStep.value = step;
+}
+</script>
+
+<template>
+    <div class="flex flex-row px-3">
+        <div
+            :class="i !== props.totalSteps ? 'grow' : ''"
+            class="flex"
+            v-for="i in props.totalSteps"
+        >
+            <button
+                class="mx-2 rounded-full bg-blue-500 px-4 py-2"
+                type="button"
+                @click="setStep(i)"
+            >
+                {{ i }}
+            </button>
+            <div
+                :class="i !== props.totalSteps ? 'grow' : ''"
+                class="flex flex-col"
+            >
+                <div class="grow"></div>
+                <div
+                    :class="
+                        i !== props.totalSteps
+                            ? 'border-top-2 border-gray-500 border-solid border'
+                            : ''
+                    "
+                ></div>
+                <div class="grow"></div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<style></style>
