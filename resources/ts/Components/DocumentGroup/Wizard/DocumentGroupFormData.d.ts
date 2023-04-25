@@ -1,3 +1,5 @@
+import type { Component } from "vue";
+
 type DocumentGroupFormDataStep1 = {
     completed: boolean;
     name: string;
@@ -26,3 +28,7 @@ export type DocumentGroupFormData = {
     step4: DocumentGroupFormDataStep4;
     step5: DocumentGroupFormDataStep5;
 };
+
+export interface DocumentGroupFormStep extends Component {
+    save: () => Promise;
+}

@@ -1,4 +1,12 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const save = () => {
+    return new Promise((resolve, reject) => {
+        // resolve(true);
+        reject("Σφάλμα αποθήκευσης");
+    });
+};
+defineExpose({ save });
+</script>
 <template>
     <div class="flex flex-row bg-white p-4 m-4 rounded items-center">
         <label for="group-name" class="px-4">Όνομα ομάδας εγγράφων:</label>
