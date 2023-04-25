@@ -2,7 +2,7 @@
 const save = () => {
     return new Promise((resolve, reject) => {
         // resolve(true);
-        reject("Σφάλμα αποθήκευσης");
+        reject(["Σφάλμα αποθήκευσης"]);
     });
 };
 defineExpose({ save });

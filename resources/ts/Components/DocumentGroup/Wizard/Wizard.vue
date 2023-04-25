@@ -6,13 +6,9 @@ import Step3 from "./Step3.vue";
 import Step4 from "./Step4.vue";
 import Step5 from "./Step5.vue";
 import StepCounter from "./StepCounter.vue";
-import type {
-    DocumentGroupFormData,
-    DocumentGroupFormStep,
-} from "./DocumentGroupFormData";
+import type { DocumentGroupFormStep } from "./DocumentGroupFormData";
 import type { DocumentGroup } from "@/models";
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faPencil, faTrash } from "@fortawesome/free-solid-svg-icons";
 import {
     faChevronLeft,
     faChevronRight,
@@ -21,18 +17,23 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 library.add(faChevronLeft, faChevronRight);
 
-const emptyDocumentGroup: DocumentGroup = {
-    id: -1,
-    name: "",
-    step: 1,
-    published: false,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-};
-
-const props = defineProps<{
-    documentGroup?: DocumentGroup;
-}>();
+const props = withDefaults(
+    defineProps<{
+        documentGroup?: DocumentGroup;
+    }>(),
+    {
+        documentGroup: function () {
+            return {
+                id: -1,
+                name: "",
+                step: 1,
+                published: false,
+                created_at: new Date().toISOString(),
+                updated_at: new Date().toISOString(),
+            };
+        },
+    }
+);
 
 const form_data = ref({
     steps: 5,
@@ -41,7 +42,7 @@ const form_data = ref({
 const formSteps = [Step1, Step2, Step3, Step4, Step5];
 const currentStep = ref(1);
 
-const errorMessage = ref("");
+const errorMessage = ref<string[]>([]);
 
 const currentComponent = ref(markRaw(formSteps[0]));
 
@@ -61,9 +62,9 @@ function setStep(step: number) {
             // Πέρασε το τρέχον βήμα στον StepCounter
             stepCounterRef.value?.setStep(step);
 
-            errorMessage.value = "";
+            errorMessage.value = [];
         })
-        .catch((error: string) => {
+        .catch((error: string[]) => {
             errorMessage.value = error;
         });
 }
@@ -79,10 +80,12 @@ const nextStep = () => {
 
 <template>
     <div
-        v-if="errorMessage"
+        v-if="errorMessage.length"
         class="p-4 border border-2 border-red-300 bg-red-200 rounded"
     >
-        {{ errorMessage }}
+        <ul class="px-4">
+            <li v-for="error in errorMessage" class="list-disc">{{ error }}</li>
+        </ul>
     </div>
     <div class="m-4 font-bold underline">
         Οδηγός δημιουργίας ομάδας εγγράφων
