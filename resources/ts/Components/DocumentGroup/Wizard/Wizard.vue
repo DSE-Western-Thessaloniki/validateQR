@@ -14,6 +14,7 @@ import {
     faChevronRight,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { useWizardStore } from "@/Stores/wizard";
 
 library.add(faChevronLeft, faChevronRight);
 
@@ -34,6 +35,9 @@ const props = withDefaults(
         },
     }
 );
+
+const wizard = useWizardStore();
+wizard.documentGroup = props.documentGroup;
 
 const form_data = ref({
     steps: 5,

@@ -1,10 +1,16 @@
 <script setup lang="ts">
+import { useWizardStore } from "@/Stores/wizard";
+
+const wizard = useWizardStore();
+
 const save = () => {
     return new Promise((resolve, reject) => {
+        console.log(wizard.documentGroup);
         // resolve(true);
         reject(["Σφάλμα αποθήκευσης"]);
     });
 };
+
 defineExpose({ save });
 </script>
 <template>
