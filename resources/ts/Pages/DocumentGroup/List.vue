@@ -10,6 +10,7 @@ import debounce from "lodash/debounce";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import type { DocumentGroup } from "@/models";
 
 library.add(faPlus);
 
@@ -55,8 +56,8 @@ watch(
             </div>
         </template>
 
-        <div class="py-6 flex flex-col">
-            <div class="ml-5 p-3">
+        <div class="py-6">
+            <div class="p-3 max-w-7xl mx-auto sm:px-6 lg:px-8 my-3">
                 <Link
                     :href="route('documentGroup.create')"
                     class="p-3 bg-blue-500 rounded"

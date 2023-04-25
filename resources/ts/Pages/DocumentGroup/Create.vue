@@ -12,7 +12,7 @@ import Wizard from "@/Components/DocumentGroup/Wizard/Wizard.vue";
                 </h2>
             </div>
         </template>
-        <div class="py-6 flex flex-col">
+        <div class="p-3 max-w-7xl mx-auto sm:px-6 lg:px-8 my-3">
             <Wizard></Wizard>
         </div>
     </AppLayout>
