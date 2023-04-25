@@ -40,9 +40,14 @@ const currentStep = ref(1);
 
 const currentComponent = ref(markRaw(formSteps[0]));
 
+const stepCounterRef = ref<InstanceType<typeof StepCounter>>();
+
 function setStep(step: number) {
     currentStep.value = step;
     currentComponent.value = markRaw(formSteps[step - 1]);
+
+    // Πέρασε το τρέχον βήμα στον StepCounter
+    stepCounterRef.value?.setStep(step);
 }
 </script>
 
@@ -50,7 +55,12 @@ function setStep(step: number) {
     <div class="m-4 px-4 font-bold underline">
         Οδηγός δημιουργίας ομάδας εγγράφων
     </div>
-    <StepCounter :totalSteps="5" :currentStep="1"></StepCounter>
+    <StepCounter
+        :totalSteps="5"
+        :currentStep="currentStep"
+        ref="stepCounterRef"
+        @click-set-step="setStep"
+    ></StepCounter>
     <component :is="currentComponent"></component>
     <div class="flex flex-row m-4">
         <button

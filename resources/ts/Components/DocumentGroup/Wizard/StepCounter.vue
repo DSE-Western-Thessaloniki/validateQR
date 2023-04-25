@@ -6,11 +6,19 @@ const props = defineProps<{
     currentStep: number;
 }>();
 
+const emit = defineEmits(["click-set-step"]);
+
 const currentStep = ref(props.currentStep);
 
 function setStep(step: number) {
     currentStep.value = step;
 }
+
+function clickSetStep(step: number) {
+    emit("click-set-step", step);
+}
+
+defineExpose({ setStep });
 </script>
 
 <template>
@@ -21,9 +29,10 @@ function setStep(step: number) {
             v-for="i in props.totalSteps"
         >
             <button
-                class="mx-2 rounded-full bg-blue-500 px-4 py-2"
+                :class="currentStep >= i ? 'bg-blue-500' : 'bg-gray-500'"
+                class="mx-2 rounded-full bg-blue-500 px-4 py-2 transition ease-in-out duration-700"
                 type="button"
-                @click="setStep(i)"
+                @click="clickSetStep(i)"
             >
                 {{ i }}
             </button>
