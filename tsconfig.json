@@ -116,6 +116,7 @@
     "include": [
         "resources/ts/shims-vue.d.ts",
         "resources/ts/shims-window.d.ts",
+        "resources/**/*.ts",
         "resources/**/*.vue"
     ],
     "exclude": ["public", "vendor", "node_modules"]
