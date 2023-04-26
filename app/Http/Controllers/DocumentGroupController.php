@@ -47,7 +47,15 @@ class DocumentGroupController extends Controller
      */
     public function store(StoreDocumentGroupRequest $request)
     {
-        //
+        dd($request->validated());
+        
+        $documentGroup = DocumentGroup::create($request->validated());
+
+        if ($documentGroup === null) {
+            return response()->json(["Σφάλμα δημιουργίας νέας ομάδας εγγράφων"], 401);
+        }
+
+        return response()->json($documentGroup);
     }
 
     /**

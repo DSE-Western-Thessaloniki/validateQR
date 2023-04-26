@@ -1,13 +1,44 @@
 <script setup lang="ts">
+import route from "ziggy-js";
+
 import { useWizardStore } from "@/Stores/wizard";
+import { router } from "@inertiajs/core";
+import { useForm } from "@inertiajs/vue3";
 
 const wizard = useWizardStore();
 
+const form = useForm({
+    ...wizard.documentGroup,
+});
+
 const save = () => {
-    return new Promise((resolve, reject) => {
-        console.log(wizard.documentGroup);
-        // resolve(true);
-        reject(["Σφάλμα αποθήκευσης"]);
+    return new Promise(async (resolve, reject) => {
+        // Έλεγξε αν πρόκειται για δημιουργία νέου ή ενημέρωση ήδη υπάρχοντος
+        const url =
+            wizard.documentGroup!.id === -1
+                ? route("documentGroup.store")
+                : route("documentGroup.update", {
+                      id: wizard.documentGroup!.id,
+                  });
+
+        const method = wizard.documentGroup!.id === -1 ? "post" : "put";
+
+        form.submit(method, url, {
+            preserveState: true,
+            onSuccess: () => resolve("OK"),
+        });
+        // router.visit(url, {
+        //     method: method,
+        //     // @ts-expect-error
+        //     data: wizard.documentGroup,
+        //     onError: (error) => {
+        //         console.log(error);
+        //         reject(["Σφάλμα αποθήκευσης ομάδας αρχείων"]);
+        //     },
+        //     preserveState: true,
+        // });
+
+        resolve("OK");
     });
 };
 
@@ -21,6 +52,8 @@ defineExpose({ save });
             type="text"
             name="group-name"
             placeholder="Όνομα"
+            v-bind="form.name"
         />
+        <div v-if="form.errors.name">{{ form.errors.name }}</div>
     </div>
 </template>
