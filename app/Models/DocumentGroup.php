@@ -10,6 +10,13 @@ class DocumentGroup extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'user_id',
+        'name',
+        'step',
+        'published'
+    ];
+
     public function documents(): HasMany {
         return $this->hasMany(Document::class);
     }

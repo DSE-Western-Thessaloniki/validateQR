@@ -47,9 +47,11 @@ class DocumentGroupController extends Controller
      */
     public function store(StoreDocumentGroupRequest $request)
     {
-        dd($request->validated());
-        
-        $documentGroup = DocumentGroup::create($request->validated());
+        $userId = auth()->user()->getAuthIdentifier();
+
+        $documentGroup = DocumentGroup::create(array_merge($request->validated(), [
+            'user_id' => $userId,
+        ]));
 
         if ($documentGroup === null) {
             return response()->json(["Σφάλμα δημιουργίας νέας ομάδας εγγράφων"], 401);

@@ -2,13 +2,16 @@
 import route from "ziggy-js";
 
 import { useWizardStore } from "@/Stores/wizard";
-import { router } from "@inertiajs/core";
-import { useForm } from "@inertiajs/vue3";
+import { ref, watch } from "vue";
+import axios from "axios";
+import type { AxiosError } from "axios";
 
 const wizard = useWizardStore();
 
-const form = useForm({
-    ...wizard.documentGroup,
+const documentGroupName = ref("");
+
+watch(documentGroupName, (value) => {
+    // wizard.documentGroup!.name = documentGroupName.value;
 });
 
 const save = () => {
@@ -23,22 +26,31 @@ const save = () => {
 
         const method = wizard.documentGroup!.id === -1 ? "post" : "put";
 
-        form.submit(method, url, {
-            preserveState: true,
-            onSuccess: () => resolve("OK"),
-        });
-        // router.visit(url, {
-        //     method: method,
-        //     // @ts-expect-error
-        //     data: wizard.documentGroup,
-        //     onError: (error) => {
-        //         console.log(error);
-        //         reject(["Σφάλμα αποθήκευσης ομάδας αρχείων"]);
-        //     },
-        //     preserveState: true,
-        // });
+        axios({
+            url: url,
+            method: method,
+            // @ts-expect-error
+            data: wizard.documentGroup,
+        })
+            .then((response) => {
+                if (response.status === 200) {
+                    wizard.documentGroup = response.data;
+                }
+                console.log(response);
+                resolve("OK");
+            })
+            .catch((error: AxiosError) => {
+                let errors: Array<String> = [];
 
-        resolve("OK");
+                if (error.response) {
+                    error.response.data.errors.forEach((error: AxiosError) => {
+                        errors.push(error.message);
+                    });
+                } else {
+                    errors.push("Γενικό σφάλμα αποθήκευσης!");
+                }
+                reject(errors);
+            });
     });
 };
 
@@ -50,10 +62,9 @@ defineExpose({ save });
         <input
             class="transition ease-in-out hover:border-blue-500 ring-blue-500 hover:inset-ring hover:ring-1 focus:border-blue-500 placeholder:italic placeholder:text-slate-400"
             type="text"
-            name="group-name"
             placeholder="Όνομα"
-            v-bind="form.name"
+            v-model="documentGroupName"
         />
-        <div v-if="form.errors.name">{{ form.errors.name }}</div>
+        <!-- <div v-if="form.errors.name">{{ form.errors.name }}</div> -->
     </div>
 </template>
