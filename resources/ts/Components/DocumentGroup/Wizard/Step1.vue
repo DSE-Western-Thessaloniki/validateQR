@@ -4,7 +4,7 @@ import route from "ziggy-js";
 import { useWizardStore } from "@/Stores/wizard";
 import { ref, watch } from "vue";
 import axios from "axios";
-import type { AxiosError } from "axios";
+import { isLaravelValidationError } from "@/laravel-validation-error";
 
 const wizard = useWizardStore();
 
@@ -29,7 +29,6 @@ const save = () => {
         axios({
             url: url,
             method: method,
-            // @ts-expect-error
             data: wizard.documentGroup,
         })
             .then((response) => {
@@ -39,16 +38,18 @@ const save = () => {
                 console.log(response);
                 resolve("OK");
             })
-            .catch((error: AxiosError) => {
+            .catch((error: unknown) => {
                 let errors: Array<String> = [];
 
-                if (error.response) {
-                    error.response.data.errors.forEach((error: AxiosError) => {
-                        errors.push(error.message);
-                    });
+                if (isLaravelValidationError(error)) {
+                    wizard.validationErrors = error.response.data.errors;
+                    errors.push(error.response.data.message);
+                } else if (error instanceof Error) {
+                    errors.push(error.message);
                 } else {
                     errors.push("Γενικό σφάλμα αποθήκευσης!");
                 }
+
                 reject(errors);
             });
     });
@@ -65,6 +66,13 @@ defineExpose({ save });
             placeholder="Όνομα"
             v-model="documentGroupName"
         />
-        <!-- <div v-if="form.errors.name">{{ form.errors.name }}</div> -->
+        <div v-if="wizard.validationErrors?.name">
+            <div
+                class="text-red-500 text-sm"
+                v-for="error in wizard.validationErrors.name"
+            >
+                {{ error }}
+            </div>
+        </div>
     </div>
 </template>
