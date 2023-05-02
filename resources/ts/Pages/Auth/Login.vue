@@ -8,6 +8,8 @@ import InputLabel from "@/Components/InputLabel.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import TextInput from "@/Components/TextInput.vue";
 import route from "ziggy-js";
+import { usePage } from "@inertiajs/vue3";
+import type { PageWithFlashProps } from "@/flash-message";
 
 defineProps({
     canResetPassword: Boolean,
@@ -28,6 +30,8 @@ const submit = () => {
         onFinish: () => form.reset("password"),
     });
 };
+
+const page = usePage<PageWithFlashProps>();
 </script>
 
 <template>
@@ -40,6 +44,13 @@ const submit = () => {
 
         <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
             {{ status }}
+        </div>
+
+        <div
+            v-if="page.props.flash.message"
+            class="text-center mb-4 font-medium text-sm text-red-600 bg-red-200 p-2 border-red-500 border-2"
+        >
+            {{ page.props.flash.message }}
         </div>
 
         <form @submit.prevent="submit">
