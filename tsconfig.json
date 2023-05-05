@@ -37,7 +37,7 @@
         // "rootDirs": [],                                   /* Allow multiple folders to be treated as one when resolving modules. */
         // "typeRoots": [],                                  /* Specify multiple folders that act like './node_modules/@types'. */
         "types": [
-            "vite/client"
+            "vite/client", "cypress"
         ] /* Specify type package names to be included without being referenced in a source file. */,
         // "allowUmdGlobalAccess": true,                     /* Allow accessing UMD globals from modules. */
         // "moduleSuffixes": [],                             /* List of file name suffixes to search when resolving a module. */
@@ -117,7 +117,8 @@
         "resources/ts/shims-vue.d.ts",
         "resources/ts/shims-window.d.ts",
         "resources/**/*.ts",
-        "resources/**/*.vue"
+        "resources/**/*.vue",
+        "cypress/**/*.ts"
     ],
     "exclude": ["public", "vendor", "node_modules"]
 }
