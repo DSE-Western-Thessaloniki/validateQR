@@ -8,6 +8,8 @@ import {
 } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import type { DocumentGroup } from "@/models";
+import { Link } from "@inertiajs/vue3";
+import route from "ziggy-js";
 
 library.add(faPencil, faTrash, faCircleCheck, faCircleXmark);
 
@@ -51,11 +53,12 @@ const publishedText = published ? "text-green-700" : "text-orange-700";
                     ]"
                     class="py-2 px-5"
                 ></DocumentGroupStatus>
-                <div
+                <Link
+                    :href="route('documentGroup.edit', { id: group.id })"
                     class="transition ease-in-out duration-300 px-3 py-2 mx-2 rounded-md hover:shadow-xl hover:bg-sky-300 hover:-translate-y-0.5"
                 >
                     <FontAwesomeIcon :icon="faPencil" size="1x" />
-                </div>
+                </Link>
                 <div
                     class="transition ease-in-out duration-300 px-3 py-2 mx-2 rounded-md hover:shadow-xl hover:bg-red-500 hover:-translate-y-0.5"
                 >

@@ -8,14 +8,32 @@ import { isLaravelValidationError } from "@/laravel-validation-error";
 
 const wizard = useWizardStore();
 
-const documentGroupName = ref("");
+const documentGroupName = ref(wizard.documentGroup!.name);
 
-watch(documentGroupName, (value) => {
-    // wizard.documentGroup!.name = documentGroupName.value;
+let nameChanged = false;
+
+watch(documentGroupName, (newName) => {
+    wizard.documentGroup!.name = newName;
+
+    nameChanged = true;
 });
 
 const save = () => {
     return new Promise(async (resolve, reject) => {
+        // Έλεγξε αν έχεις κάτι να αποθηκεύσεις πρώτα
+        if (documentGroupName.value === "") {
+            reject([
+                "Είναι υποχρεωτικό να δώσετε ένα όνομα στην ομάδα των εγγράφων",
+            ]);
+            return;
+        }
+
+        // Αν δεν άλλαξε το όνομα δεν έχει νόημα να ζητήσουμε εκ νέου αποθήκευση
+        if (!nameChanged) {
+            resolve("OK");
+            return;
+        }
+
         // Έλεγξε αν πρόκειται για δημιουργία νέου ή ενημέρωση ήδη υπάρχοντος
         const url =
             wizard.documentGroup!.id === -1
@@ -35,7 +53,6 @@ const save = () => {
                 if (response.status === 200) {
                     wizard.documentGroup = response.data;
                 }
-                console.log(response);
                 resolve("OK");
             })
             .catch((error: unknown) => {

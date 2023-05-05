@@ -11,7 +11,7 @@ class UpdateDocumentGroupRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,9 @@ class UpdateDocumentGroupRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required|max:255',
+            'step' => 'integer',
+            'published' => 'boolean',
         ];
     }
 }

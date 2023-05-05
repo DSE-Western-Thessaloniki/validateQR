@@ -73,7 +73,9 @@ class DocumentGroupController extends Controller
      */
     public function edit(DocumentGroup $documentGroup)
     {
-        //
+        return Inertia::render('DocumentGroup/Edit', [
+            "group" => $documentGroup,
+        ]);
     }
 
     /**
@@ -81,7 +83,13 @@ class DocumentGroupController extends Controller
      */
     public function update(UpdateDocumentGroupRequest $request, DocumentGroup $documentGroup)
     {
-        //
+        $documentGroup->update(array_merge($request->validated(), [
+            'updated_at' => now(),
+        ]));
+
+        $documentGroup->save();
+
+        return response()->json($documentGroup);
     }
 
     /**

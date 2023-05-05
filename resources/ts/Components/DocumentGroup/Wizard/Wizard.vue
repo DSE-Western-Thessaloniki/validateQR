@@ -27,7 +27,7 @@ const props = withDefaults(
             return {
                 id: -1,
                 name: "",
-                step: 1,
+                step: 0,
                 published: false,
                 created_at: new Date().toISOString(),
                 updated_at: new Date().toISOString(),
@@ -44,11 +44,11 @@ const form_data = ref({
 });
 
 const formSteps = [Step1, Step2, Step3, Step4, Step5];
-const currentStep = ref(1);
+const currentStep = ref(props.documentGroup.step + 1);
 
 const errorMessage = ref<string[]>([]);
 
-const currentComponent = ref(markRaw(formSteps[0]));
+const currentComponent = ref(markRaw(formSteps[currentStep.value - 1]));
 
 const stepCounterRef = ref<InstanceType<typeof StepCounter>>();
 const componentRef = ref<Component>();
