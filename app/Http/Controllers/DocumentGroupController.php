@@ -49,7 +49,12 @@ class DocumentGroupController extends Controller
     {
         $userId = auth()->user()->getAuthIdentifier();
 
-        $documentGroup = DocumentGroup::create(array_merge($request->validated(), [
+        $validated = $request->validated();
+
+        // Αλλαγή βάσης μέτρησης από 0-4 σε 1-5
+        $validated['step']++;
+
+        $documentGroup = DocumentGroup::create(array_merge($validated, [
             'user_id' => $userId,
         ]));
 
@@ -86,6 +91,9 @@ class DocumentGroupController extends Controller
         $documentGroup->update(array_merge($request->validated(), [
             'updated_at' => now(),
         ]));
+
+        // Αλλαγή βάσης μέτρησης από 0-4 σε 1-5
+        $documentGroup->step++;
 
         $documentGroup->save();
 
