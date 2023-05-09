@@ -2,6 +2,7 @@
 import axios from "axios";
 import { isLaravelValidationError } from "@/laravel-validation-error";
 import { useWizardStore } from "@/Stores/wizard";
+import FileDropZone from "@/Components/FileDropZone.vue";
 import route from "ziggy-js";
 
 const wizard = useWizardStore();
@@ -54,13 +55,6 @@ defineExpose({ save });
 <template>
     <div class="flex flex-col bg-white p-4 m-4 rounded items-center">
         <div>Προσθήκη αρχείων</div>
-        <div
-            class="cursor-pointer m-3 w-full h-64 bg-indigo-500 flex flex-col items-center justify-center rounded border-2 border-indigo-700 shadow shadow-2xl"
-        >
-            <span class="text-white">
-                Σύρετε τα αρχεία εδώ μέσα ή πατήστε για να εμφανιστεί το
-                παράθυρο διαλόγου</span
-            >
-        </div>
+        <FileDropZone />
     </div>
 </template>
