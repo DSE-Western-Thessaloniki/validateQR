@@ -8,6 +8,9 @@ import { isLaravelValidationError } from "@/laravel-validation-error";
 
 const wizard = useWizardStore();
 
+// Κάνε έλεγχο μήπως έχουμε ήδη ολοκληρώσει το βήμα
+wizard.stepCompleted = wizard.documentGroup!.name.length > 0;
+
 const documentGroupName = ref(wizard.documentGroup!.name);
 
 let nameChanged = false;
@@ -15,7 +18,16 @@ let nameChanged = false;
 watch(documentGroupName, (newName) => {
     wizard.documentGroup!.name = newName;
 
+    // Σηματοδότησε ότι το όνομα άλλαξε για να γίνει εκ νέου αποθήκευση
     nameChanged = true;
+
+    // Αν το όνομα είναι κενό δεν έχει ολοκληρωθεί το βήμα
+    if (newName === "") {
+        wizard.stepCompleted = false;
+        return;
+    }
+
+    wizard.stepCompleted = true;
 });
 
 const save = () => {
