@@ -38,6 +38,7 @@ const props = withDefaults(
 
 const wizard = useWizardStore();
 wizard.documentGroup = props.documentGroup;
+wizard.totalStepsCompleted = props.documentGroup.step;
 
 const form_data = ref({
     steps: 5,
@@ -106,7 +107,13 @@ const nextStep = () => {
     ></component>
     <div class="flex flex-row m-4">
         <button
-            class="p-2 rounded-md transition ease-in-out duration-300 bg-sky-300 hover:shadow-xl hover:-translate-y-0.5"
+            class="p-2 rounded-md"
+            :class="
+                wizard.backStepAllowed
+                    ? 'transition ease-in-out duration-300 bg-sky-300 hover:shadow-xl hover:-translate-y-0.5'
+                    : 'bg-gray-400'
+            "
+            :disabled="!wizard.backStepAllowed"
             v-if="currentStep !== 1"
             @click="prevStep"
         >
@@ -115,7 +122,13 @@ const nextStep = () => {
         </button>
         <div class="grow"></div>
         <button
-            class="p-2 rounded-md transition ease-in-out duration-300 bg-sky-300 hover:shadow-xl hover:-translate-y-0.5"
+            class="p-2 rounded-md"
+            :class="
+                wizard.stepCompleted
+                    ? 'transition ease-in-out duration-300 bg-sky-300 hover:shadow-xl hover:-translate-y-0.5'
+                    : 'bg-gray-400'
+            "
+            :disabled="!wizard.stepCompleted"
             v-if="currentStep !== 5"
             @click="nextStep"
         >
