@@ -40,12 +40,10 @@ const wizard = useWizardStore();
 wizard.documentGroup = props.documentGroup;
 wizard.totalStepsCompleted = props.documentGroup.step;
 
-const form_data = ref({
-    steps: 5,
-});
+const totalSteps = 5;
 
 const formSteps = [Step1, Step2, Step3, Step4, Step5];
-const currentStep = ref(props.documentGroup.step + 1);
+const currentStep = ref(Math.min(props.documentGroup.step + 1, totalSteps));
 
 const errorMessage = ref<string[]>([]);
 
