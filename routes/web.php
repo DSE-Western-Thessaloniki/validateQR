@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\DocumentGroupController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -33,6 +34,8 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
+    Route::post('/document/storeMany', [DocumentController::class, 'storeMany'])->name('document.storeMany');
+    Route::resource('document', DocumentController::class);
     Route::resource('documentGroup', DocumentGroupController::class);
     Route::get('/users', function () {
         return Inertia::render('Users');

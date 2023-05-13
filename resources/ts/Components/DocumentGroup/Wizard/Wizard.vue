@@ -7,7 +7,6 @@ import Step4 from "./Step4.vue";
 import Step5 from "./Step5.vue";
 import StepCounter from "./StepCounter.vue";
 import type { DocumentGroupFormStep } from "./DocumentGroupFormData";
-import type { DocumentGroup } from "@/models";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import {
     faChevronLeft,
@@ -20,7 +19,7 @@ library.add(faChevronLeft, faChevronRight);
 
 const props = withDefaults(
     defineProps<{
-        documentGroup?: DocumentGroup;
+        documentGroup?: App.Models.DocumentGroup;
     }>(),
     {
         documentGroup: function () {

@@ -4,6 +4,7 @@ import { isLaravelValidationError } from "@/laravel-validation-error";
 import { useWizardStore } from "@/Stores/wizard";
 import FileDropZone from "@/Components/FileDropZone.vue";
 import route from "ziggy-js";
+import { ref } from "vue";
 
 const wizard = useWizardStore();
 
@@ -54,7 +55,18 @@ defineExpose({ save });
 </script>
 <template>
     <div class="flex flex-col bg-white p-4 m-4 rounded items-center">
-        <div>Προσθήκη αρχείων</div>
-        <FileDropZone />
+        <div class="font-bold">Ήδη ανεβασμένα αρχεία</div>
+        <div
+            class="flex flex-row h-72 w-full bg-gray-100 rounded shadow-inner items-center justify-center m-3"
+        >
+            <div class="" v-if="!wizard.documents?.length">
+                Δεν έχουν ανέβει αρχεία ακόμη!
+            </div>
+            <div v-for="(document, index) in wizard.documents">
+                {{ index }}. {{ document.filename }}
+            </div>
+        </div>
+        <div class="font-bold">Προσθήκη αρχείων</div>
+        <FileDropZone :url="route('document.storeMany')" />
     </div>
 </template>

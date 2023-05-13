@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreDocumentRequest extends FormRequest
+class StoreManyDocumentsRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,8 +23,8 @@ class StoreDocumentRequest extends FormRequest
     {
         return [
             'document_group_id' => 'required|integer',
-            'filename' => 'required|string|max:255',
-            'state' => 'required|integer|min:0|max:2',
+            'documents' => 'required',
+            'documents.*' => 'required|mimes:pdf|max:5120'
         ];
     }
 }

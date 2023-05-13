@@ -12,6 +12,12 @@ class Document extends Model
     use HasFactory;
     use HasUuids;
 
+    protected $fillable = [
+        'document_group_id',
+        'filename',
+        'state'
+    ];
+
     public function documentGroup(): BelongsTo {
         return $this->belongsTo(DocumentGroup::class);
     }

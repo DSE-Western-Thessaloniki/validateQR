@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreDocumentRequest;
+use App\Http\Requests\StoreManyDocumentsRequest;
 use App\Http\Requests\UpdateDocumentRequest;
 use App\Models\Document;
 
@@ -29,7 +30,37 @@ class DocumentController extends Controller
      */
     public function store(StoreDocumentRequest $request)
     {
-        //
+        $document = Document::create($request->validated());
+
+        return response()->json($document);
+    }
+
+    public function storeMany(StoreManyDocumentsRequest $request)
+    {
+        $validated = $request->validated();
+
+        $documents = [];
+
+        if ($request->file('documents')) {
+            dd($request->file('documents'));
+            foreach($request->file('documents') as $file) {
+                $filename = mb_ereg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', $file->getClientOriginalName());
+                // Remove any runs of periods
+                $filename = mb_ereg_replace("([\.]{2,})", '', $filename);
+
+                $document = Document::create([
+                    'document_group_id' => $validated['document_group_id'],
+                    'filename' => $filename,
+                    'state' => 0,
+                ]);
+
+                $file->storeAs($validated['document_group_id'], $document->id);
+
+                $documents[] = $document;
+            }
+        }
+
+        return response()->json($documents);
     }
 
     /**
