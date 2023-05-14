@@ -70,7 +70,8 @@ class DocumentGroupController extends Controller
      */
     public function show(DocumentGroup $documentGroup)
     {
-        //
+        $documentGroup->load('documents');
+        return response()->json($documentGroup);
     }
 
     /**

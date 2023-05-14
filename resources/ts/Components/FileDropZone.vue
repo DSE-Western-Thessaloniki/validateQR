@@ -17,6 +17,8 @@ const props = withDefaults(
     }
 );
 
+const emit = defineEmits(["uploaded"]);
+
 const onDrop = (event: DragEvent) => {
     dragged.value = false;
 
@@ -43,6 +45,7 @@ const upload = () => {
     files.value.forEach((file) => {
         formData.append("documents[]", file);
     });
+    formData.append("document_group_id", `${wizard?.documentGroup?.id}`);
 
     uploadButtonDisabled.value = true;
 
@@ -62,6 +65,9 @@ const upload = () => {
         .then((response) => {
             if (response.status === 200) {
                 uploadButtonDisabled.value = false;
+                uploadButtonRef.value!.innerHTML = "Ανέβασμα αρχείων";
+                files.value = [];
+                emit("uploaded");
             }
         })
         .catch((error: unknown) => {

@@ -4,9 +4,32 @@ import { isLaravelValidationError } from "@/laravel-validation-error";
 import { useWizardStore } from "@/Stores/wizard";
 import FileDropZone from "@/Components/FileDropZone.vue";
 import route from "ziggy-js";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 
 const wizard = useWizardStore();
+
+const getDocuments = async () => {
+    return await axios
+        .get(route("documentGroup.show", wizard.documentGroup?.id))
+        .then((response) => {
+            if (response.status === 200) {
+                console.log(response.data);
+                return response.data;
+            }
+        })
+        .catch((error) => {
+            //console.log(error);
+            return error;
+        });
+};
+
+const updateDocumentView = async () => {
+    const d = await getDocuments();
+
+    if (Array.isArray(d.documents)) {
+        wizard.documents = d.documents;
+    }
+};
 
 const save = () => {
     return new Promise(async (resolve, reject) => {
@@ -52,6 +75,10 @@ const save = () => {
 };
 
 defineExpose({ save });
+
+onMounted(async () => {
+    await updateDocumentView();
+});
 </script>
 <template>
     <div class="flex flex-col bg-white p-4 m-4 rounded items-center">
@@ -62,11 +89,24 @@ defineExpose({ save });
             <div class="" v-if="!wizard.documents?.length">
                 Δεν έχουν ανέβει αρχεία ακόμη!
             </div>
-            <div v-for="(document, index) in wizard.documents">
-                {{ index }}. {{ document.filename }}
+            <div v-else class="flex flex-col h-72 w-full overflow-y-auto">
+                <div
+                    v-for="(document, index) in wizard.documents"
+                    class="bg-white rounded m-2 p-2 shadow flex flex-row items-center"
+                >
+                    <div class="flex-grow text-ellipsis">
+                        {{ index + 1 }}. {{ document.filename }}
+                    </div>
+                    <span class="bg-orange-300 p-2 ml-2 rounded shadow">{{
+                        document.id
+                    }}</span>
+                </div>
             </div>
         </div>
         <div class="font-bold">Προσθήκη αρχείων</div>
-        <FileDropZone :url="route('document.storeMany')" />
+        <FileDropZone
+            :url="route('document.storeMany')"
+            @uploaded="updateDocumentView"
+        />
     </div>
 </template>
