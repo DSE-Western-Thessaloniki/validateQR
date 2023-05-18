@@ -8,6 +8,9 @@ import { onMounted, ref } from "vue";
 
 const wizard = useWizardStore();
 
+// Κάνε έλεγχο μήπως έχουμε ήδη ολοκληρώσει το βήμα
+wizard.stepCompleted = wizard.documents !== undefined;
+
 const getDocuments = async () => {
     return await axios
         .get(route("documentGroup.show", wizard.documentGroup?.id))
@@ -28,49 +31,15 @@ const updateDocumentView = async () => {
 
     if (Array.isArray(d.documents)) {
         wizard.documents = d.documents;
+        if (wizard.documents!.length > 0) {
+            wizard.stepCompleted = true;
+        }
     }
 };
 
 const save = () => {
     return new Promise(async (resolve, reject) => {
         resolve("OK");
-
-        // Έλεγξε αν πρόκειται για δημιουργία νέου ή ενημέρωση ήδη υπάρχοντος
-        // const url =
-        //     wizard.documentGroup!.id === -1
-        //         ? route("documentGroup.store")
-        //         : route("documentGroup.update", {
-        //               id: wizard.documentGroup!.id,
-        //           });
-
-        // const method = wizard.documentGroup!.id === -1 ? "post" : "put";
-
-        // axios({
-        //     url: url,
-        //     method: method,
-        //     data: wizard.documentGroup,
-        // })
-        //     .then((response) => {
-        //         if (response.status === 200) {
-        //             wizard.documentGroup = response.data;
-        //         }
-        //         console.log(response);
-        //         resolve("OK");
-        //     })
-        //     .catch((error: unknown) => {
-        //         let errors: Array<String> = [];
-
-        //         if (isLaravelValidationError(error)) {
-        //             wizard.validationErrors = error.response.data.errors;
-        //             errors.push(error.response.data.message);
-        //         } else if (error instanceof Error) {
-        //             errors.push(error.message);
-        //         } else {
-        //             errors.push("Γενικό σφάλμα αποθήκευσης!");
-        //         }
-
-        //         reject(errors);
-        //     });
     });
 };
 
