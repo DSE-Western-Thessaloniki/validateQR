@@ -5,29 +5,15 @@ import { useWizardStore } from "@/Stores/wizard";
 import FileDropZone from "@/Components/FileDropZone.vue";
 import route from "ziggy-js";
 import { onMounted, ref } from "vue";
+import { getDocuments } from "./utilities";
 
 const wizard = useWizardStore();
 
 // Κάνε έλεγχο μήπως έχουμε ήδη ολοκληρώσει το βήμα
 wizard.stepCompleted = wizard.documents !== undefined;
 
-const getDocuments = async () => {
-    return await axios
-        .get(route("documentGroup.show", wizard.documentGroup?.id))
-        .then((response) => {
-            if (response.status === 200) {
-                console.log(response.data);
-                return response.data;
-            }
-        })
-        .catch((error) => {
-            //console.log(error);
-            return error;
-        });
-};
-
 const updateDocumentView = async () => {
-    const d = await getDocuments();
+    const d = await getDocuments(wizard.documentGroup!.id);
 
     if (Array.isArray(d.documents)) {
         wizard.documents = d.documents;
