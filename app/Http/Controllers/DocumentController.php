@@ -53,7 +53,7 @@ class DocumentController extends Controller
                     'state' => 0,
                 ]);
 
-                $file->storeAs($validated['document_group_id'], $document->id);
+                $file->storeAs($validated['document_group_id'], "{$document->id}.pdf");
 
                 $documents[] = $document;
             }
