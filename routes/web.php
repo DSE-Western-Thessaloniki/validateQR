@@ -34,9 +34,13 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
+
     Route::post('/document/storeMany', [DocumentController::class, 'storeMany'])->name('document.storeMany');
     Route::resource('document', DocumentController::class);
+
+    Route::post('/documentGroup/{documentGroup}/addQR', [DocumentGroupController::class, 'addQR'])->name('documentGroup.addQR');
     Route::resource('documentGroup', DocumentGroupController::class);
+
     Route::get('/users', function () {
         return Inertia::render('Users');
     })->name('users');

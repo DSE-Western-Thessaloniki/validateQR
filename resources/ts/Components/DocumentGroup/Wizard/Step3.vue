@@ -2,6 +2,8 @@
 import { useWizardStore } from "@/Stores/wizard";
 import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import axios from "axios";
+import route from "ziggy-js";
 
 const wizard = useWizardStore();
 
@@ -48,6 +50,14 @@ const save = () => {
     });
 };
 
+const addQR = () => {
+    axios.post(
+        route("documentGroup.addQR", {
+            documentGroup: wizard.documentGroup!.id,
+        })
+    );
+};
+
 defineExpose({ save });
 </script>
 <template>
@@ -79,6 +89,18 @@ defineExpose({ save });
                 </div>
             </div>
         </div>
-        <div>Λήψη αρχείων με QR Code</div>
+        <button
+            type="button"
+            @click="addQR"
+            class="p-2 bg-blue-500 text-white w-full rounded shadow-lg"
+        >
+            Προσθήκη QR Code
+        </button>
+        <button
+            type="button"
+            class="mt-2 p-2 bg-blue-500 w-full rounded shadow-lg"
+        >
+            Λήψη αρχείων με QR Code
+        </button>
     </div>
 </template>

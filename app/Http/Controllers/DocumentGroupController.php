@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreDocumentGroupRequest;
 use App\Http\Requests\UpdateDocumentGroupRequest;
+use App\Jobs\AddQRToDocument;
+use App\Jobs\ZipDocumentGroup;
 use App\Models\DocumentGroup;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Request;
 use Inertia\Inertia;
 
@@ -107,5 +110,24 @@ class DocumentGroupController extends Controller
     public function destroy(DocumentGroup $documentGroup)
     {
         //
+    }
+
+    public function addQR(DocumentGroup $documentGroup)
+    {
+        logger("Adding QR to group: {$documentGroup->name}");
+        $documents = $documentGroup->documents()->get();
+        logger("Total documents: {$documents->count()}");
+
+        $chain = [];
+
+        foreach($documents as $document) {
+            array_push($chain, new AddQRToDocument($document));
+        }
+
+        array_push($chain, new ZipDocumentGroup($documentGroup));
+
+        Bus::chain($chain)->dispatch();
+
+        return response()->json("OK");
     }
 }
