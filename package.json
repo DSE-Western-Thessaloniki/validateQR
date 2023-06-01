@@ -26,7 +26,6 @@
         "eslint-plugin-node": "^11.1.0",
         "eslint-plugin-prettier": "^4.2.1",
         "eslint-plugin-promise": "^6.1.1",
-        "eslint-plugin-standard": "^5.0.0",
         "eslint-plugin-vue": "^9.10.0",
         "laravel-vite-plugin": "^0.7.2",
         "postcss": "^8.4.14",
