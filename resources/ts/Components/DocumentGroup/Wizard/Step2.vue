@@ -30,10 +30,6 @@ const save = () => {
 };
 
 defineExpose({ save });
-
-onMounted(async () => {
-    await updateDocumentView();
-});
 </script>
 <template>
     <div class="flex flex-col bg-white p-4 m-4 rounded items-center">
