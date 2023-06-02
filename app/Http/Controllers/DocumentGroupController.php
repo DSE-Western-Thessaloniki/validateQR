@@ -83,6 +83,7 @@ class DocumentGroupController extends Controller
      */
     public function edit(DocumentGroup $documentGroup)
     {
+        $documentGroup->load('documents');
         return Inertia::render('DocumentGroup/Edit', [
             "group" => $documentGroup,
         ]);

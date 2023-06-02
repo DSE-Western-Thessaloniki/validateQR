@@ -19,7 +19,9 @@ library.add(faChevronLeft, faChevronRight);
 
 const props = withDefaults(
     defineProps<{
-        documentGroup?: App.Models.DocumentGroup;
+        documentGroup?: App.Models.DocumentGroup & {
+            documents?: Array<App.Models.Document>;
+        };
     }>(),
     {
         documentGroup: function () {
@@ -37,6 +39,7 @@ const props = withDefaults(
 
 const wizard = useWizardStore();
 wizard.documentGroup = props.documentGroup;
+wizard.documents = props.documentGroup.documents;
 wizard.totalStepsCompleted = props.documentGroup.step;
 
 const totalSteps = 5;
