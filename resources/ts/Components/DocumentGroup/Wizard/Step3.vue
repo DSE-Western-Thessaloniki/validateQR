@@ -7,46 +7,23 @@ import route from "ziggy-js";
 
 const wizard = useWizardStore();
 
+const documentsWithoutQR = () => {
+    if (!wizard.documents) {
+        // Κανονικά δεν πρέπει να φτάσουμε ποτέ εδώ
+        // Ωστόσο αν φτάσουμε ας μην σκάσει τουλάχιστον
+        return 1;
+    }
+
+    return wizard.documents.filter((document) => !(document.state > 0)).length;
+};
+
+// Κάνε έλεγχο μήπως έχουμε ήδη ολοκληρώσει το βήμα
+wizard.stepCompleted = documentsWithoutQR() === 0;
+
+// Δεν έχουμε κάτι να αποθηκεύσουμε από την φόρμα
 const save = () => {
     return new Promise(async (resolve, reject) => {
         resolve("OK");
-
-        // Έλεγξε αν πρόκειται για δημιουργία νέου ή ενημέρωση ήδη υπάρχοντος
-        // const url =
-        //     wizard.documentGroup!.id === -1
-        //         ? route("documentGroup.store")
-        //         : route("documentGroup.update", {
-        //               id: wizard.documentGroup!.id,
-        //           });
-
-        // const method = wizard.documentGroup!.id === -1 ? "post" : "put";
-
-        // axios({
-        //     url: url,
-        //     method: method,
-        //     data: wizard.documentGroup,
-        // })
-        //     .then((response) => {
-        //         if (response.status === 200) {
-        //             wizard.documentGroup = response.data;
-        //         }
-        //         console.log(response);
-        //         resolve("OK");
-        //     })
-        //     .catch((error: unknown) => {
-        //         let errors: Array<String> = [];
-
-        //         if (isLaravelValidationError(error)) {
-        //             wizard.validationErrors = error.response.data.errors;
-        //             errors.push(error.response.data.message);
-        //         } else if (error instanceof Error) {
-        //             errors.push(error.message);
-        //         } else {
-        //             errors.push("Γενικό σφάλμα αποθήκευσης!");
-        //         }
-
-        //         reject(errors);
-        //     });
     });
 };
 
