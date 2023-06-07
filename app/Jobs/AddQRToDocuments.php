@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Models\Document;
 use App\Models\DocumentGroup;
 use chillerlan\QRCode\QRCode;
 use chillerlan\QRCode\QROptions;
@@ -93,6 +94,9 @@ class AddQRToDocuments implements ShouldQueue, ShouldBeUnique
                 logger($message);
                 $this->fail($message);
             }
+
+            $document->state = Document::WithQR;
+            $document->save();
             usleep(250000);
         }
 
