@@ -6,6 +6,9 @@ declare namespace App.Models {
         published: boolean;
         created_at: string;
         updated_at: string;
+        job_status: 0 | 1 | 2 | 3 | 4;
+        job_status_text: string;
+        job_date: string;
     }
 
     export interface Document {

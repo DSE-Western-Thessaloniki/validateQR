@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Models\Document;
 use App\Models\DocumentGroup;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -9,6 +10,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use ZipArchive;
 
 class ZipDocumentGroup implements ShouldQueue, ShouldBeUnique
 {
@@ -33,7 +35,46 @@ class ZipDocumentGroup implements ShouldQueue, ShouldBeUnique
      */
     public function handle(): void
     {
-        //
+        $this->documentGroup->job_status_text = "Συμπίεση αρχείων";
+        $this->documentGroup->save();
+
+        $zip = new ZipArchive();
+        $filename = storage_path() . "/{$this->documentGroup->id}/{$this->documentGroup->id}.zip";
+
+        if (!$zip->open($filename, ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
+            $message = "Αποτυχία συμπίεσης! {$zip->getStatusString()}";
+            $this->documentGroup->job_status = DocumentGroup::JobFailed;
+            $this->documentGroup->job_status_text = $message;
+            $this->documentGroup->save();
+
+            $this->fail($message);
+        }
+
+
+        foreach($this->documentGroup->documents()->get() as $document) {
+            $document_filename = storage_path(). "/{$this->documentGroup->id}/qr/{$document->id}.pdf";
+            if (!$zip->addFile($document_filename)) {
+                $message = "Αποτυχία συμπίεσης αρχείου {$document->id}.pdf! {$zip->getStatusString()}";
+                $this->documentGroup->job_status = DocumentGroup::JobFailed;
+                $this->documentGroup->job_status_text = $message;
+                $this->documentGroup->save();
+
+                $this->fail($message);
+            }
+        }
+
+        if (!$zip->close()) {
+            $message = "Αποτυχία συμπίεσης! {$zip->getStatusString()}";
+            $this->documentGroup->job_status = DocumentGroup::JobFailed;
+            $this->documentGroup->job_status_text = $message;
+            $this->documentGroup->save();
+
+            $this->fail($message);
+        }
+
+        $this->documentGroup->job_status = DocumentGroup::JobFinished;
+        $this->documentGroup->job_status_text = "Ολοκληρώθηκε";
+        $this->documentGroup->save();
     }
 
     /**

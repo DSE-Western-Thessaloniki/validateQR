@@ -86,11 +86,18 @@ class AddQRToDocuments implements ShouldQueue, ShouldBeUnique
             $documentWithQR = $pdf->Output("S");
             if (!Storage::put("{$this->documentGroup->id}/qr/{$document->id}.pdf", $documentWithQR)) {
                 $message = "Αποτυχία αποθήκευσης αρχείου '{$this->documentGroup->id}/qr/{$document->id}.pdf'";
+                $this->documentGroup->job_status = DocumentGroup::JobFailed;
+                $this->documentGroup->job_status_text = $message;
+                $this->documentGroup->save();
+
                 logger($message);
                 $this->fail($message);
             }
             usleep(250000);
         }
+
+        $this->documentGroup->job_status_text = "Ολοκληρώθηκε η δημιουργία QR";
+        $this->documentGroup->save();
     }
 
     /**

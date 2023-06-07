@@ -118,6 +118,12 @@ class DocumentGroupController extends Controller
     {
         logger("Adding QR to group: {$documentGroup->name}");
 
+        $documentGroup->job_status = DocumentGroup::JobInProgress;
+        $documentGroup->job_status_text = "Προσθήκη QR στην ομάδα";
+        $documentGroup->job_start_date = now();
+
+        $documentGroup->save();
+
         Bus::chain([
             new AddQRToDocuments($documentGroup),
             new ZipDocumentGroup($documentGroup, Document::WithQR)
