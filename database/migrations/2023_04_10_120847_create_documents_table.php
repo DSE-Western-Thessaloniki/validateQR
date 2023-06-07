@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('documents', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            $table->ulid('id')->primary();
             $table->unsignedBigInteger('document_group_id');
             $table->string('filename');
             $table->unsignedInteger('state')
