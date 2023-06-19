@@ -56,7 +56,8 @@
 				"yoavbls.pretty-ts-errors",
 				"GitHub.vscode-pull-request-github",
 				"bradlc.vscode-tailwindcss",
-				"msamgan.laravel-pint-vscode"
+				"msamgan.laravel-pint-vscode",
+				"TabNine.tabnine-vscode"
 			],
             "settings": {}
         }
