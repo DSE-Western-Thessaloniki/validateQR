@@ -4,16 +4,12 @@ namespace App\Jobs;
 
 use App\Models\Document;
 use App\Models\DocumentGroup;
-use chillerlan\QRCode\QRCode;
-use chillerlan\QRCode\QROptions;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Storage;
-use setasign\Fpdi\Fpdi as Fpdi;
 
 class AddQRToDocuments implements ShouldQueue, ShouldBeUnique
 {
@@ -41,51 +37,25 @@ class AddQRToDocuments implements ShouldQueue, ShouldBeUnique
         $documents = $this->documentGroup->documents()->get();
 
         foreach ($documents as $document) {
-            $pdf = new Fpdi();
+            $filename = storage_path()."/app/{$this->documentGroup->id}/{$document->id}.pdf";
+            $output_filename = storage_path()."/app/{$this->documentGroup->id}/qr/{$document->id}.pdf";
+            logger("Adding QR to {$filename}");
+            $output = null;
+            $return_value = null;
+            $document_link = "https://srv-dide-v.thess.sch.gr/evaluateQR/evaluate/{$document->id}";
 
-            $filename = "{$this->documentGroup->id}/{$document->id}.pdf";
-            logger("Reading file '{$this->documentGroup->id}/{$document->id}.pdf'");
-            $pages_count = $pdf->setSourceFile(Storage::readStream($filename));
-
-            // Αντέγραψε κάθε σελίδα
-            for ($i = 1; $i <= $pages_count; $i++) {
-                $tplIdx = $pdf->importPage($i);
-                $size = $pdf->getTemplateSize($tplIdx);
-                $width = $size['width'];
-                $height = $size['height'];
-
-                if ($height > $width) { // Portrait
-                    $pdf->AddPage('P');
-                } else { // Landscape
-                    $pdf->AddPage('L');
-                }
-
-                $pdf->useTemplate($tplIdx, 0, 0);
-
-                if ($i === 1) {
-                    $options = new QROptions([
-                        'version' => 6,
-                        'outputType' => QRCode::OUTPUT_IMAGE_PNG,
-                        'eccLevel' => QRCode::ECC_M,
-                        'scale' => 2,
-                        'imageBase64' => true,
-                    ]);
-
-                    $pdf->Image(
-                        (new QRCode($options))->render("https://srv-dide-v.thess.sch.gr/evaluateQR/evaluate/{$document->id}"),
-                        $width - 30,
-                        5,
-                        0,
-                        0,
-                        'PNG',
-                        "https://srv-dide-v.thess.sch.gr/evaluateQR/evaluate/{$document->id}"
-                    );
-                }
+            // Δημιούργησε τον φάκελο qr μέσα στον φάκελο της ομάδας γιατί τον χρειαζόμαστε
+            if (!file_exists(storage_path(). "/app/{$this->documentGroup->id}/qr")) {
+                logger("Create qr folder");
+                mkdir(storage_path(). "/app/{$this->documentGroup->id}/qr");
             }
 
-            $documentWithQR = $pdf->Output('S');
-            if (! Storage::put("{$this->documentGroup->id}/qr/{$document->id}.pdf", $documentWithQR)) {
+            exec("/usr/bin/qpdfImageEmbed -i {$filename} --qr '{$document_link}' --link --side 2 -o {$output_filename}", $output, $return_value);
+
+            if ($return_value != null && $return_value != 0) {
                 $message = "Αποτυχία αποθήκευσης αρχείου '{$this->documentGroup->id}/qr/{$document->id}.pdf'";
+                logger($output);
+                logger($return_value);
                 $this->documentGroup->job_status = DocumentGroup::JobFailed;
                 $this->documentGroup->job_status_text = $message;
                 $this->documentGroup->save();
