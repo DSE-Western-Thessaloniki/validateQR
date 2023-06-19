@@ -55,7 +55,8 @@
 				"Vue.vscode-typescript-vue-plugin",
 				"yoavbls.pretty-ts-errors",
 				"GitHub.vscode-pull-request-github",
-				"bradlc.vscode-tailwindcss"
+				"bradlc.vscode-tailwindcss",
+				"msamgan.laravel-pint-vscode"
 			],
             "settings": {}
         }
