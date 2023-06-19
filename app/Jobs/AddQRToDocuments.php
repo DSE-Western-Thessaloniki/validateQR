@@ -40,7 +40,7 @@ class AddQRToDocuments implements ShouldQueue, ShouldBeUnique
     {
         $documents = $this->documentGroup->documents()->get();
 
-        foreach($documents as $document) {
+        foreach ($documents as $document) {
             $pdf = new Fpdi();
 
             $filename = "{$this->documentGroup->id}/{$document->id}.pdf";
@@ -48,12 +48,11 @@ class AddQRToDocuments implements ShouldQueue, ShouldBeUnique
             $pages_count = $pdf->setSourceFile(Storage::readStream($filename));
 
             // Αντέγραψε κάθε σελίδα
-            for($i = 1; $i <= $pages_count; $i++)
-            {
+            for ($i = 1; $i <= $pages_count; $i++) {
                 $tplIdx = $pdf->importPage($i);
                 $size = $pdf->getTemplateSize($tplIdx);
-                $width = $size["width"];
-                $height = $size["height"];
+                $width = $size['width'];
+                $height = $size['height'];
 
                 if ($height > $width) { // Portrait
                     $pdf->AddPage('P');
@@ -65,11 +64,11 @@ class AddQRToDocuments implements ShouldQueue, ShouldBeUnique
 
                 if ($i === 1) {
                     $options = new QROptions([
-                        'version'      => 6,
-                        'outputType'   => QRCode::OUTPUT_IMAGE_PNG,
-                        'eccLevel'     => QRCode::ECC_M,
-                        'scale'        => 2,
-                        'imageBase64'  => true,
+                        'version' => 6,
+                        'outputType' => QRCode::OUTPUT_IMAGE_PNG,
+                        'eccLevel' => QRCode::ECC_M,
+                        'scale' => 2,
+                        'imageBase64' => true,
                     ]);
 
                     $pdf->Image(
@@ -78,14 +77,14 @@ class AddQRToDocuments implements ShouldQueue, ShouldBeUnique
                         5,
                         0,
                         0,
-                        "PNG",
+                        'PNG',
                         "https://srv-dide-v.thess.sch.gr/evaluateQR/evaluate/{$document->id}"
                     );
                 }
             }
 
-            $documentWithQR = $pdf->Output("S");
-            if (!Storage::put("{$this->documentGroup->id}/qr/{$document->id}.pdf", $documentWithQR)) {
+            $documentWithQR = $pdf->Output('S');
+            if (! Storage::put("{$this->documentGroup->id}/qr/{$document->id}.pdf", $documentWithQR)) {
                 $message = "Αποτυχία αποθήκευσης αρχείου '{$this->documentGroup->id}/qr/{$document->id}.pdf'";
                 $this->documentGroup->job_status = DocumentGroup::JobFailed;
                 $this->documentGroup->job_status_text = $message;
@@ -100,7 +99,7 @@ class AddQRToDocuments implements ShouldQueue, ShouldBeUnique
             usleep(250000);
         }
 
-        $this->documentGroup->job_status_text = "Ολοκληρώθηκε η δημιουργία QR";
+        $this->documentGroup->job_status_text = 'Ολοκληρώθηκε η δημιουργία QR';
         $this->documentGroup->save();
     }
 

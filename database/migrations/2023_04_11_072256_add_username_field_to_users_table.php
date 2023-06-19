@@ -15,7 +15,7 @@ return new class extends Migration
                 ->nullable(false);
         });
     }
-    
+
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {

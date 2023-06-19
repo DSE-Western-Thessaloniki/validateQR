@@ -20,11 +20,11 @@ class DocumentGroupController extends Controller
     public function index()
     {
         $filter = Request::input('filter');
-        if (!is_string($filter)) {
+        if (! is_string($filter)) {
             $filter = '';
         }
 
-        $groups = DocumentGroup::when($filter, function($query) use ($filter) {
+        $groups = DocumentGroup::when($filter, function ($query) use ($filter) {
             $query->where('name', 'like', "%{$filter}%");
         })
             ->withCount('documents')
@@ -34,7 +34,7 @@ class DocumentGroupController extends Controller
             'groups' => $groups,
             'filters' => [
                 'filter' => $filter,
-            ]
+            ],
         ]);
     }
 
@@ -63,7 +63,7 @@ class DocumentGroupController extends Controller
         ]));
 
         if ($documentGroup === null) {
-            return response()->json(["Σφάλμα δημιουργίας νέας ομάδας εγγράφων"], 401);
+            return response()->json(['Σφάλμα δημιουργίας νέας ομάδας εγγράφων'], 401);
         }
 
         return response()->json($documentGroup);
@@ -75,6 +75,7 @@ class DocumentGroupController extends Controller
     public function show(DocumentGroup $documentGroup)
     {
         $documentGroup->load('documents');
+
         return response()->json($documentGroup);
     }
 
@@ -84,8 +85,9 @@ class DocumentGroupController extends Controller
     public function edit(DocumentGroup $documentGroup)
     {
         $documentGroup->load('documents');
+
         return Inertia::render('DocumentGroup/Edit', [
-            "group" => $documentGroup,
+            'group' => $documentGroup,
         ]);
     }
 
@@ -119,16 +121,16 @@ class DocumentGroupController extends Controller
         logger("Adding QR to group: {$documentGroup->name}");
 
         $documentGroup->job_status = DocumentGroup::JobInProgress;
-        $documentGroup->job_status_text = "Προσθήκη QR στην ομάδα";
+        $documentGroup->job_status_text = 'Προσθήκη QR στην ομάδα';
         $documentGroup->job_start_date = now();
 
         $documentGroup->save();
 
         Bus::chain([
             new AddQRToDocuments($documentGroup),
-            new ZipDocumentGroup($documentGroup, Document::WithQR)
+            new ZipDocumentGroup($documentGroup, Document::WithQR),
         ])->dispatch();
 
-        return response()->json("OK");
+        return response()->json('OK');
     }
 }

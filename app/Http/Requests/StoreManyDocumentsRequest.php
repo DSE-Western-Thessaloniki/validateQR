@@ -24,7 +24,7 @@ class StoreManyDocumentsRequest extends FormRequest
         return [
             'document_group_id' => 'required|integer',
             'documents' => 'required',
-            'documents.*' => 'required|mimes:pdf|max:5120'
+            'documents.*' => 'required|mimes:pdf|max:5120',
         ];
     }
 }

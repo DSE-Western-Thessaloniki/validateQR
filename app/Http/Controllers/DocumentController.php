@@ -42,7 +42,7 @@ class DocumentController extends Controller
         $documents = [];
 
         if ($request->file('documents')) {
-            foreach($request->file('documents') as $file) {
+            foreach ($request->file('documents') as $file) {
                 $filename = mb_ereg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', $file->getClientOriginalName());
                 // Remove any runs of periods
                 $filename = mb_ereg_replace("([\.]{2,})", '', $filename);

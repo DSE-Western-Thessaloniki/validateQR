@@ -3,7 +3,6 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
@@ -50,16 +49,15 @@ class Handler extends ExceptionHandler
 
     /**
      * Prepare exception for rendering.
-     * @param \Illuminate\Http\Request $request
-     * @param  \Throwable  $e
-     * @return \Symfony\Component\HttpFoundation\Response
+     *
+     * @param  \Illuminate\Http\Request  $request
      */
     public function render($request, Throwable $e): Response
     {
         $expectsJson = $request->expectsJson();
         $response = parent::render($request, $e);
 
-        if (!$expectsJson && $response->getStatusCode() === 419) {
+        if (! $expectsJson && $response->getStatusCode() === 419) {
             return back()->with([
                 'message' => 'Το χρονικό όριο για την σελίδα εξαντλήθηκε, παρακαλούμε δοκιμάστε ξανά.',
             ]);

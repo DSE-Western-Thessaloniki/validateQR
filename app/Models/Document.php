@@ -15,14 +15,17 @@ class Document extends Model
     protected $fillable = [
         'document_group_id',
         'filename',
-        'state'
+        'state',
     ];
 
     const InitialState = 0;
+
     const WithQR = 1;
+
     const WithQRAndSignature = 2;
 
-    public function documentGroup(): BelongsTo {
+    public function documentGroup(): BelongsTo
+    {
         return $this->belongsTo(DocumentGroup::class);
     }
 }

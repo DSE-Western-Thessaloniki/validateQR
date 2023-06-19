@@ -14,16 +14,21 @@ class DocumentGroup extends Model
         'user_id',
         'name',
         'step',
-        'published'
+        'published',
     ];
 
     const JobNotStarted = 0;
+
     const JobInProgress = 1;
+
     const JobFinished = 2;
+
     const JobFailed = 3;
+
     const JobAborted = 4;
 
-    public function documents(): HasMany {
+    public function documents(): HasMany
+    {
         return $this->hasMany(Document::class);
     }
 }
