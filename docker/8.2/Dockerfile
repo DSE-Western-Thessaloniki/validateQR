@@ -18,7 +18,7 @@ WORKDIR /stage1
 RUN curl -L -O https://github.com/qpdf/qpdf/releases/download/v11.4.0/qpdf-11.4.0.tar.gz
 RUN tar xvfz qpdf-11.4.0.tar.gz && mkdir qpdf-11.4.0/build
 WORKDIR /stage1/qpdf-11.4.0/build
-RUN cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX:PATH=/usr .. && make $((`nproc`+1)) install
+RUN cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX:PATH=/usr .. && make -j$((`nproc`+1)) install
 
 WORKDIR /stage1
 RUN git clone -b 'v0.3.0' --depth 1 https://github.com/DSE-West-Thessaloniki/qpdfImageEmbed.git
@@ -27,14 +27,14 @@ WORKDIR  /stage1/qpdfImageEmbed/
 RUN mkdir build
 WORKDIR  /stage1/qpdfImageEmbed/build/
 RUN . /etc/profile
-RUN cmake -DCMAKE_BUILD_TYPE=Release .. && make $((`nproc`+1)) install
+RUN cmake -DCMAKE_BUILD_TYPE=Release .. && make -j$((`nproc`+1)) install
 
 FROM ubuntu:22.04
 
 LABEL maintainer="Taylor Otwell"
 
 ARG WWWGROUP
-ARG NODE_VERSION=18
+ARG NODE_MAJOR=18
 ARG POSTGRES_VERSION=15
 
 WORKDIR /var/www/html
@@ -48,6 +48,9 @@ RUN apt-get update \
     && apt-get install -y gnupg gosu curl ca-certificates zip unzip git supervisor sqlite3 libcap2-bin libpng-dev dnsutils \
     && curl -sS 'https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x14aa40ec0831756756d7f66c4f4ea0aae5267a6c' | gpg --dearmor | tee /etc/apt/keyrings/ppa_ondrej_php.gpg > /dev/null \
     && echo "deb [signed-by=/etc/apt/keyrings/ppa_ondrej_php.gpg] https://ppa.launchpadcontent.net/ondrej/php/ubuntu jammy main" > /etc/apt/sources.list.d/ppa_ondrej_php.list \
+    && mkdir -p /etc/apt/keyrings \
+    && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \
+    && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_$NODE_MAJOR.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list \
     && apt-get update \
     && apt-get install -y php8.2-cli php8.2-dev \
     php8.2-pgsql php8.2-sqlite3 php8.2-gd php8.2-imagick \
@@ -59,7 +62,6 @@ RUN apt-get update \
     php8.2-msgpack php8.2-igbinary php8.2-redis php8.2-swoole \
     php8.2-memcached php8.2-pcov php8.2-xdebug \
     && curl -sLS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer \
-    && curl -sLS https://deb.nodesource.com/setup_$NODE_VERSION.x | bash - \
     && apt-get install -y nodejs \
     && npm install -g npm \
     && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | gpg --dearmor | tee /etc/apt/keyrings/yarn.gpg >/dev/null \
