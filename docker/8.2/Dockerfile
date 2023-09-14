@@ -21,7 +21,7 @@ WORKDIR /stage1/qpdf-11.4.0/build
 RUN cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX:PATH=/usr .. && make -j$((`nproc`+1)) install
 
 WORKDIR /stage1
-RUN git clone -b 'v0.3.0' --depth 1 https://github.com/DSE-West-Thessaloniki/qpdfImageEmbed.git
+RUN git clone -b 'v0.3.2' --depth 1 https://github.com/DSE-West-Thessaloniki/qpdfImageEmbed.git
 WORKDIR  /stage1/qpdfImageEmbed/
 
 RUN mkdir build
