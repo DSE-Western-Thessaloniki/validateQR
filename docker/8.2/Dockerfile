@@ -18,7 +18,7 @@ WORKDIR /stage1
 RUN curl -L -O https://github.com/qpdf/qpdf/releases/download/v11.4.0/qpdf-11.4.0.tar.gz
 RUN tar xvfz qpdf-11.4.0.tar.gz && mkdir qpdf-11.4.0/build
 WORKDIR /stage1/qpdf-11.4.0/build
-RUN cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX:PATH=/usr .. && make install
+RUN cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX:PATH=/usr .. && make $((`nproc`+1)) install
 
 WORKDIR /stage1
 RUN git clone -b 'v0.3.0' --depth 1 https://github.com/DSE-West-Thessaloniki/qpdfImageEmbed.git
@@ -27,7 +27,7 @@ WORKDIR  /stage1/qpdfImageEmbed/
 RUN mkdir build
 WORKDIR  /stage1/qpdfImageEmbed/build/
 RUN . /etc/profile
-RUN cmake -DCMAKE_BUILD_TYPE=Release .. && make install
+RUN cmake -DCMAKE_BUILD_TYPE=Release .. && make $((`nproc`+1)) install
 
 FROM ubuntu:22.04
 
