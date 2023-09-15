@@ -19,4 +19,17 @@ declare namespace App.Models {
         created_at: string;
         updated_at: string;
     }
+
+    export interface Settings {
+        id: string;
+        qr_side: number;
+        qr_top_margin: number;
+        qr_side_margin: number;
+        qr_scale: number;
+        img_side: number;
+        img_top_margin: number;
+        img_side_margin: number;
+        img_scale: number;
+        img_filename: string;
+    }
 }

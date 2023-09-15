@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\DocumentGroupController;
-use Illuminate\Foundation\Application;
+use App\Http\Controllers\SettingsController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -41,6 +41,8 @@ Route::middleware([
     Route::post('/documentGroup/{documentGroup}/addQR', [DocumentGroupController::class, 'addQR'])->name('documentGroup.addQR');
     Route::resource('documentGroup', DocumentGroupController::class);
 
+    Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
+    Route::post('/settings', [SettingsController::class, 'store'])->name('settings.store');
     Route::get('/users', function () {
         return Inertia::render('Users');
     })->name('users');

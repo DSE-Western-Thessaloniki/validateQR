@@ -7,6 +7,7 @@ import {
     faBoxArchive,
     faUsers,
     faLayerGroup,
+    faGears,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { Link } from "@inertiajs/vue3";
@@ -83,6 +84,16 @@ library.add(
                     <div class="mt-2">Ανέβασμα υπογεγραμμένων εγγράφων</div>
                 </div>
             </Link> -->
+            <Link :href="route('settings.index')">
+                <div
+                    class="flex flex-col items-center bg-white shadow p-4 rounded-md hover:shadow-lg"
+                >
+                    <div>
+                        <font-awesome-icon :icon="faGears" size="2xl" />
+                    </div>
+                    <div class="mt-2">Ρυθμίσεις</div>
+                </div>
+            </Link>
             <Link href="">
                 <div
                     class="flex flex-col items-center bg-white shadow p-4 rounded-md hover:shadow-lg"
