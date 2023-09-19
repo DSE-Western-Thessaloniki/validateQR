@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import AppLayout from "@/Layouts/AppLayout.vue";
 import Wizard from "@/Components/DocumentGroup/Wizard/Wizard.vue";
-import type { DocumentGroup } from "@/models";
 
 const props = defineProps<{
-    group: DocumentGroup;
+    group: App.Models.DocumentGroup;
 }>();
 </script>
 

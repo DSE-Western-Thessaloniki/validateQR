@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import AppLayout from "@/Layouts/AppLayout.vue";
 import Settings from "@/Components/Settings.vue";
-import type { Settings as SettingsType } from "@/models";
 
 const props = defineProps<{
-    settings: SettingsType[];
+    settings: App.Models.Settings;
 }>();
 </script>
 

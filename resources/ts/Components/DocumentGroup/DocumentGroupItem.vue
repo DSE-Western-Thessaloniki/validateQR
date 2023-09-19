@@ -7,14 +7,13 @@ import {
     faCircleXmark,
 } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import type { DocumentGroup } from "@/models";
 import { Link } from "@inertiajs/vue3";
 import route from "ziggy-js";
 
 library.add(faPencil, faTrash, faCircleCheck, faCircleXmark);
 
 const props = defineProps<{
-    group: DocumentGroup & { documents_count: number };
+    group: App.Models.DocumentGroup & { documents_count: number };
     index: number;
     step: number;
 }>();

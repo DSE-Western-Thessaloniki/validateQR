@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { useForm, type InertiaForm, Link } from "@inertiajs/vue3";
 import route from "ziggy-js";
-import type { Settings } from "@/models";
 
 const props = withDefaults(
     defineProps<{
         image?: string;
-        settings: Settings;
+        settings: App.Models.Settings;
     }>(),
     {
         image: "",

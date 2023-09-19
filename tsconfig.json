@@ -117,6 +117,7 @@
     "include": [
         "resources/ts/shims-vue.d.ts",
         "resources/ts/shims-window.d.ts",
+        "resources/ts/models.d.ts",
         "resources/**/*.ts",
         "resources/**/*.vue",
         "cypress/**/*.ts"

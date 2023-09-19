@@ -10,12 +10,13 @@ import debounce from "lodash/debounce";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import type { DocumentGroup } from "@/models";
 
 library.add(faPlus);
 
 const props = defineProps<{
-    groups: PaginationProps<DocumentGroup>;
+    groups: PaginationProps<
+        App.Models.DocumentGroup & { documents_count: number }
+    >;
     filters: { filter: string };
 }>();
 
