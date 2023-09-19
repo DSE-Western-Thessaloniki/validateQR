@@ -4,12 +4,14 @@ namespace App\Jobs;
 
 use App\Models\Document;
 use App\Models\DocumentGroup;
+use App\Models\Settings;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Process;
 
 class AddQRToDocuments implements ShouldQueue, ShouldBeUnique
 {
@@ -34,6 +36,8 @@ class AddQRToDocuments implements ShouldQueue, ShouldBeUnique
      */
     public function handle(): void
     {
+        $settings = Settings::all()->first();
+
         $documents = $this->documentGroup->documents()->get();
 
         foreach ($documents as $document) {
@@ -41,8 +45,8 @@ class AddQRToDocuments implements ShouldQueue, ShouldBeUnique
             $output_filename = storage_path()."/app/{$this->documentGroup->id}/qr/{$document->id}.pdf";
             logger("Adding QR to {$filename}");
             $output = null;
-            $return_value = null;
             $document_link = "https://srv-dide-v.thess.sch.gr/evaluateQR/evaluate/{$document->id}";
+            $image_filename = storage_path()."/app/stamp.png";
 
             // Δημιούργησε τον φάκελο qr μέσα στον φάκελο της ομάδας γιατί τον χρειαζόμαστε
             if (!file_exists(storage_path(). "/app/{$this->documentGroup->id}/qr")) {
@@ -50,7 +54,36 @@ class AddQRToDocuments implements ShouldQueue, ShouldBeUnique
                 mkdir(storage_path(). "/app/{$this->documentGroup->id}/qr");
             }
 
-            exec("/usr/bin/qpdfImageEmbed -i {$filename} --qr '{$document_link}' --link --side 2 -o {$output_filename}", $output, $return_value);
+            $result = Process::run([
+                "/usr/bin/qpdfImageEmbed",
+                "-i",
+                $filename,
+                "--qr",
+                $document_link,
+                "--link",
+                "--qr-side",
+                $settings->qr_side,
+                "--qr-scale",
+                $settings->qr_scale,
+                "--qr-top-margin",
+                $settings->qr_top_margin,
+                "--qr-side-margin",
+                $settings->qr_side_margin,
+                "-o",
+                $output_filename,
+                "--img-side",
+                $settings->img_side,
+                "--img-scale",
+                $settings->img_scale,
+                "--img-top-margin",
+                $settings->img_top_margin,
+                "--img-side-margin",
+                $settings->img_side_margin,
+                "-s",
+                storage_path() . "/$settings->img_filename",
+            ], $output);
+
+            $return_value = $result->exitCode();
 
             if ($return_value != null && $return_value != 0) {
                 $message = "Αποτυχία αποθήκευσης αρχείου '{$this->documentGroup->id}/qr/{$document->id}.pdf'";
@@ -63,6 +96,8 @@ class AddQRToDocuments implements ShouldQueue, ShouldBeUnique
                 logger($message);
                 $this->fail($message);
             }
+
+            unlink(storage_path()."/app/{$this->documentGroup->id}/{$document->id}.tmp.pdf");
 
             $document->state = Document::WithQR;
             $document->save();
