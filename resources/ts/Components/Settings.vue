@@ -135,15 +135,13 @@ const submit = () => {
                 <legend>Ρυθμίσεις Εικόνας</legend>
 
                 <div class="mb-2 flex">
-                    <label for="current_image" class="w-1/3"
+                    <label for="current_image" class="w-1/3 inline-block"
                         >Τρέχουσα εικόνα:</label
                     >
                     <img
                         v-if="props.image"
                         :src="props.image"
-                        class="inline-block"
-                        width="100%"
-                        height="200px"
+                        class="inline-block w-2/3"
                     />
                     <div
                         v-else

@@ -13,9 +13,18 @@ class SettingsController extends Controller
      */
     public function index()
     {
-        return Inertia::render('Settings/Index', [
-            'settings' => Settings::all(),
-        ]);
+        $settings = Settings::all()->first();
+        if ($settings->img_filename === "") {
+            return Inertia::render('Settings/Index', [
+                'settings' => Settings::all(),
+            ]);
+        } else {
+            $mime = mime_content_type(storage_path() . "/" . $settings->img_filename);
+            return Inertia::render('Settings/Index', [
+                'image' => 'data:' . $mime . ";base64," . base64_encode(file_get_contents(storage_path() . "/" . $settings->img_filename)),
+                'settings' => Settings::all(),
+            ]);
+        }
     }
 
     /**
@@ -34,7 +43,7 @@ class SettingsController extends Controller
 
             $imageFile->move(storage_path(), $filename);
 
-            $data = $request->safe()->merge(['img_filename' => $filename]);
+            $data = $request->safe()->merge(['img_filename' => $filename])->toArray();
         } else {
             $data = $request->validated();
         }
