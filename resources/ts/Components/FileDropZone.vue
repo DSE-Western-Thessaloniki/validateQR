@@ -31,6 +31,26 @@ const onDrop = (event: DragEvent) => {
     }
 };
 
+const onClick = (event: Event) => {
+    let input = document.createElement("input");
+    input.type = "file";
+    input.multiple = true;
+
+    input.onchange = (e) => {
+        if (
+            e &&
+            e.target !== null &&
+            (e.target as HTMLInputElement).files !== null
+        ) {
+            for (const file of (e.target as HTMLInputElement).files) {
+                files.value.push(file);
+            }
+        }
+    };
+
+    input.click();
+};
+
 const removeFile = (index: number) => {
     files.value.splice(index, 1);
 };
@@ -102,6 +122,7 @@ const uploadButtonDisabled: Ref<boolean> = ref(false);
         @dragover.prevent
         @dragend="dragged = false"
         @dragleave="dragged = false"
+        @click="onClick"
     >
         <span
             class="text-white text-center pointer-events-none"
