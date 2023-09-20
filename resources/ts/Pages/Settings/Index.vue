@@ -3,7 +3,7 @@ import AppLayout from "@/Layouts/AppLayout.vue";
 import Settings from "@/Components/Settings.vue";
 
 const props = defineProps<{
-    image: string;
+    image?: string;
     settings: App.Models.Settings;
 }>();
 </script>
