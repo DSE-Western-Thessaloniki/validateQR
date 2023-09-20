@@ -31,6 +31,7 @@ class StoreSettingsRequest extends FormRequest
             'img_top_margin' => ['required','numeric','min:0'],
             'img_side_margin' => ['required','numeric','min:0'],
             'img_scale' => ['required','numeric','min:0'],
+            'remove_image' => ['required', 'numeric', 'min:0', 'max:1'],
         ];
     }
 }

@@ -36,6 +36,12 @@ class SettingsController extends Controller
 
         $imageFile = $request->file('image');
 
+        $removeImage = $request->get('remove_image');
+
+        if ($removeImage && count($settings)) {
+            unlink(storage_path() . "/" . $settings[0]->img_filename);
+        }
+
         if ($imageFile instanceof \Illuminate\Http\UploadedFile) {
             $filename = mb_ereg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', $imageFile->getClientOriginalName());
             // Remove any runs of periods
@@ -46,6 +52,9 @@ class SettingsController extends Controller
             $data = $request->safe()->merge(['img_filename' => $filename])->toArray();
         } else {
             $data = $request->validated();
+            if (!isset($data['img_filename']) && $removeImage) {
+                $data['img_filename'] = "";
+            }
         }
 
         if ($settings->isEmpty()) {

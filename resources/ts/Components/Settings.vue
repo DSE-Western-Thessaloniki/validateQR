@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useForm, type InertiaForm, Link } from "@inertiajs/vue3";
+import { ref } from "vue";
 import route from "ziggy-js";
 
 const props = withDefaults(
@@ -22,6 +23,7 @@ const form: InertiaForm<{
     img_top_margin: number;
     img_side_margin: number;
     img_scale: number;
+    remove_image: number;
 }> = useForm({
     image: null,
     qr_side: 0,
@@ -32,7 +34,10 @@ const form: InertiaForm<{
     img_top_margin: 0,
     img_side_margin: 0,
     img_scale: 1,
+    remove_image: 0,
 });
+
+let image = ref(props.image);
 
 // Κάνουμε έλεγχο για ασφάλεια. Πρέπει πάντα να έχουμε μόνο ένα set ρυθμίσεων
 if (props.settings instanceof Array && props.settings.length >= 1) {
@@ -47,6 +52,12 @@ const changeImage = (e: Event) => {
 
 const submit = () => {
     form.post(route("settings.store"));
+};
+
+const removeImage = (e: Event) => {
+    e.preventDefault();
+    image.value = "";
+    form.remove_image = 1;
 };
 </script>
 
@@ -138,11 +149,16 @@ const submit = () => {
                     <label for="current_image" class="w-1/3 inline-block"
                         >Τρέχουσα εικόνα:</label
                     >
-                    <img
-                        v-if="props.image"
-                        :src="props.image"
-                        class="inline-block w-2/3"
-                    />
+                    <div v-if="image" class="inline-block w-2/3 relative">
+                        <img :src="image" />
+                        <button
+                            @click="removeImage"
+                            type="button"
+                            class="absolute top-0 right-0 px-3 py-2 bg-slate-500"
+                        >
+                            X
+                        </button>
+                    </div>
                     <div
                         v-else
                         class="flex h-24 w-24 text-center border-gray-300 border-2 p-2 items-center justify-center"
