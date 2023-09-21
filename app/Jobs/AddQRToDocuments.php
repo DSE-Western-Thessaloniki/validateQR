@@ -46,7 +46,6 @@ class AddQRToDocuments implements ShouldQueue, ShouldBeUnique
             logger("Adding QR to {$filename}");
             $output = null;
             $document_link = "https://srv-dide-v.thess.sch.gr/evaluateQR/evaluate/{$document->id}";
-            $image_filename = storage_path()."/app/stamp.png";
 
             // Δημιούργησε τον φάκελο qr μέσα στον φάκελο της ομάδας γιατί τον χρειαζόμαστε
             if (!file_exists(storage_path(). "/app/{$this->documentGroup->id}/qr")) {
@@ -54,7 +53,7 @@ class AddQRToDocuments implements ShouldQueue, ShouldBeUnique
                 mkdir(storage_path(). "/app/{$this->documentGroup->id}/qr");
             }
 
-            $result = Process::run([
+            $command = [
                 "/usr/bin/qpdfImageEmbed",
                 "-i",
                 $filename,
@@ -71,18 +70,28 @@ class AddQRToDocuments implements ShouldQueue, ShouldBeUnique
                 $settings->qr_side_margin,
                 "-o",
                 $output_filename,
-                "--img-side",
-                $settings->img_side,
-                "--img-scale",
-                $settings->img_scale,
-                "--img-top-margin",
-                $settings->img_top_margin,
-                "--img-side-margin",
-                $settings->img_side_margin,
-                "-s",
-                storage_path() . "/$settings->img_filename",
-            ], $output);
+            ];
 
+            // Έλεγξε αν έχει ρυθμιστεί εικόνα για εισαγωγή
+            // και πέρασε τις κατάλληλες ρυθμίσεις
+            if ($settings->img_filename !== "") {
+                $command[] = [
+                    "--img-side",
+                    $settings->img_side,
+                    "--img-scale",
+                    $settings->img_scale,
+                    "--img-top-margin",
+                    $settings->img_top_margin,
+                    "--img-side-margin",
+                    $settings->img_side_margin,
+                    "-s",
+                    storage_path() . "/$settings->img_filename",
+                ];
+            }
+
+            $result = Process::run($command, $output);
+
+            logger(implode(' ', $command));
             $return_value = $result->exitCode();
 
             if ($return_value != null && $return_value != 0) {
@@ -96,8 +105,6 @@ class AddQRToDocuments implements ShouldQueue, ShouldBeUnique
                 logger($message);
                 $this->fail($message);
             }
-
-            unlink(storage_path()."/app/{$this->documentGroup->id}/{$document->id}.tmp.pdf");
 
             $document->state = Document::WithQR;
             $document->save();

@@ -38,7 +38,7 @@ class ZipDocumentGroup implements ShouldQueue, ShouldBeUnique
         $this->documentGroup->save();
 
         $zip = new ZipArchive();
-        $filename = storage_path()."/{$this->documentGroup->id}/{$this->documentGroup->id}.zip";
+        $filename = storage_path('app')."/{$this->documentGroup->id}/{$this->documentGroup->id}.zip";
 
         if (! $zip->open($filename, ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
             $message = "Αποτυχία συμπίεσης! {$zip->getStatusString()}";
@@ -50,8 +50,9 @@ class ZipDocumentGroup implements ShouldQueue, ShouldBeUnique
         }
 
         foreach ($this->documentGroup->documents()->get() as $document) {
-            $document_filename = storage_path()."/{$this->documentGroup->id}/qr/{$document->id}.pdf";
-            if (! $zip->addFile($document_filename)) {
+            $document_filename = storage_path('app')."/{$this->documentGroup->id}/qr/{$document->id}.pdf";
+            logger('Zip: Προσθήκη αρχείου: '. $document_filename);
+            if (! $zip->addFile($document_filename, "{$document->id}.pdf")) {
                 $message = "Αποτυχία συμπίεσης αρχείου {$document->id}.pdf! {$zip->getStatusString()}";
                 $this->documentGroup->job_status = DocumentGroup::JobFailed;
                 $this->documentGroup->job_status_text = $message;
