@@ -32,6 +32,9 @@ const props = withDefaults(
                 published: false,
                 created_at: new Date().toISOString(),
                 updated_at: new Date().toISOString(),
+                job_status: 0,
+                job_status_text: "",
+                job_date: new Date().toISOString(),
             };
         },
     }
