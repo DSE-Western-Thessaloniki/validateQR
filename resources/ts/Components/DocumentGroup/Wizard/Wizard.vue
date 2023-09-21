@@ -14,6 +14,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { useWizardStore } from "@/Stores/wizard";
+import axios from "axios";
 
 library.add(faChevronLeft, faChevronRight);
 
@@ -83,6 +84,22 @@ const prevStep = () => {
 
 const nextStep = () => {
     setStep(currentStep.value + 1);
+};
+
+const refreshDocumentGroup = () => {
+    axios.get("/documentGroup/" + props.documentGroup.id).then((response) => {
+        wizard.documentGroup = response.data;
+    });
+};
+
+const intervalID = setInterval(refreshDocumentGroup, 2000);
+
+wizard.$subscribe((mutation, state) => {
+    console.log(state.documentGroup?.job_status);
+});
+
+const beforeUnmount = () => {
+    clearInterval(intervalID);
 };
 </script>
 
