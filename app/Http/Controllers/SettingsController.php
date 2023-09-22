@@ -13,7 +13,17 @@ class SettingsController extends Controller
      */
     public function index()
     {
-        $settings = Settings::all()->first();
+        $settings = Settings::all();
+
+        // Αν η βάση δεν έχει ρυθμίσεις φτιάξε μια εγγραφή με τις
+        // προκαθορισμένες ρυθμίσεις
+        if ($settings->isEmpty()) {
+            Settings::create();
+            $settings = Settings::all()->first();
+        } else {
+            $settings = $settings->first();
+        }
+
         if ($settings->img_filename === "") {
             return Inertia::render('Settings/Index', [
                 'settings' => Settings::all(),
