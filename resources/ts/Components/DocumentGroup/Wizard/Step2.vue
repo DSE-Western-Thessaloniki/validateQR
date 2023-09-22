@@ -1,10 +1,7 @@
 <script setup lang="ts">
-import axios from "axios";
-import { isLaravelValidationError } from "@/laravel-validation-error";
 import { useWizardStore } from "@/Stores/wizard";
 import FileDropZone from "@/Components/FileDropZone.vue";
 import route from "ziggy-js";
-import { onMounted, ref } from "vue";
 import { getDocuments } from "./utilities";
 
 const wizard = useWizardStore();
