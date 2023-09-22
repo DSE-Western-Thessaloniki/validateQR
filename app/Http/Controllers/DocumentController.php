@@ -6,6 +6,7 @@ use App\Http\Requests\StoreDocumentRequest;
 use App\Http\Requests\StoreManyDocumentsRequest;
 use App\Http\Requests\UpdateDocumentRequest;
 use App\Models\Document;
+use App\Models\DocumentGroup;
 
 class DocumentController extends Controller
 {
@@ -41,6 +42,8 @@ class DocumentController extends Controller
 
         $documents = [];
 
+        $documentGroup = DocumentGroup::findOrFail($validated['document_group_id']);
+
         if ($request->file('documents')) {
             foreach ($request->file('documents') as $file) {
                 $filename = mb_ereg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', $file->getClientOriginalName());
@@ -58,6 +61,9 @@ class DocumentController extends Controller
                 $documents[] = $document;
             }
         }
+
+        $documentGroup->step++;
+        $documentGroup->save();
 
         return response()->json($documents);
     }
