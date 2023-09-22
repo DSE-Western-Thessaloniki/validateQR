@@ -30,6 +30,9 @@ defineExpose({ save });
 </script>
 <template>
     <div class="flex flex-col bg-white p-4 m-4 rounded items-center">
+        <div class="font-bold pb-4 text-xl">
+            Βήμα 2ο: Ανέβασμα αρχείων για προσθήκη σφραγίδας
+        </div>
         <div class="font-bold">Ήδη ανεβασμένα αρχεία</div>
         <div
             class="flex flex-row h-72 w-full bg-gray-100 rounded shadow-inner items-center justify-center m-3"
