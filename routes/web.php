@@ -39,6 +39,7 @@ Route::middleware([
     Route::resource('document', DocumentController::class);
 
     Route::post('/documentGroup/{documentGroup}/addQR', [DocumentGroupController::class, 'addQR'])->name('documentGroup.addQR');
+    Route::get('/documentGroup/{documentGroup}/withQR', [DocumentGroupController::class, 'getQR'])->name('documentGroup.getQR');
     Route::resource('documentGroup', DocumentGroupController::class);
 
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');

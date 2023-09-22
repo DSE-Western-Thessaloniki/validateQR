@@ -133,4 +133,11 @@ class DocumentGroupController extends Controller
 
         return response()->json('OK');
     }
+
+    public function getQR(DocumentGroup $documentGroup)
+    {
+        return response()->download(
+            storage_path('app') . "/" . $documentGroup->id . "/qr/" . $documentGroup->id . ".zip"
+        );
+    }
 }

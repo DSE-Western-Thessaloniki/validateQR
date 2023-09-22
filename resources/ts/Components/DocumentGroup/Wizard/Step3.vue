@@ -18,7 +18,10 @@ const documentsWithoutQR = () => {
 };
 
 // Κάνε έλεγχο μήπως έχουμε ήδη ολοκληρώσει το βήμα
-wizard.stepCompleted = documentsWithoutQR() === 0;
+wizard.stepCompleted =
+    documentsWithoutQR() === 0 &&
+    wizard.documents?.length !== 0 &&
+    wizard.documentGroup?.job_status === 2;
 
 // Δεν έχουμε κάτι να αποθηκεύσουμε από την φόρμα
 const save = () => {
@@ -74,11 +77,19 @@ defineExpose({ save });
         >
             Προσθήκη QR Code
         </button>
-        <button
+        <a
             type="button"
-            class="mt-2 p-2 bg-blue-500 w-full rounded shadow-lg"
+            class="mt-2 p-2 bg-blue-500 w-full rounded shadow-lg text-center"
+            :class="
+                wizard.stepCompleted
+                    ? 'bg-green-500'
+                    : 'bg-gray-500 pointer-events-none'
+            "
+            :href="route('documentGroup.getQR', {
+                        documentGroup: wizard.documentGroup!.id,
+                    })"
         >
             Λήψη αρχείων με QR Code
-        </button>
+        </a>
     </div>
 </template>
