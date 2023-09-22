@@ -104,6 +104,7 @@ class AddQRToDocuments implements ShouldQueue, ShouldBeUnique
 
                 logger($message);
                 $this->fail($message);
+                return;
             }
 
             $document->state = Document::WithQR;

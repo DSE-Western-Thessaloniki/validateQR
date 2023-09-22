@@ -47,6 +47,7 @@ class ZipDocumentGroup implements ShouldQueue, ShouldBeUnique
             $this->documentGroup->save();
 
             $this->fail($message);
+            return;
         }
 
         foreach ($this->documentGroup->documents()->get() as $document) {
@@ -59,6 +60,7 @@ class ZipDocumentGroup implements ShouldQueue, ShouldBeUnique
                 $this->documentGroup->save();
 
                 $this->fail($message);
+                return;
             }
         }
 
@@ -69,6 +71,7 @@ class ZipDocumentGroup implements ShouldQueue, ShouldBeUnique
             $this->documentGroup->save();
 
             $this->fail($message);
+            return;
         }
 
         $this->documentGroup->job_status = DocumentGroup::JobFinished;
