@@ -38,7 +38,7 @@ class ZipDocumentGroup implements ShouldQueue, ShouldBeUnique
         $this->documentGroup->save();
 
         $zip = new ZipArchive();
-        $filename = storage_path('app')."/{$this->documentGroup->id}/{$this->documentGroup->id}.zip";
+        $filename = storage_path('app')."/{$this->documentGroup->id}/qr/{$this->documentGroup->id}.zip";
 
         if (! $zip->open($filename, ZipArchive::CREATE | ZipArchive::OVERWRITE)) {
             $message = "Αποτυχία συμπίεσης! {$zip->getStatusString()}";
