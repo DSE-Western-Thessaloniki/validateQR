@@ -94,8 +94,44 @@ const refreshDocumentGroup = () => {
 
 const intervalID = setInterval(refreshDocumentGroup, 2000);
 
+let lastRunResult: number | undefined;
+let lastRunResultText: string | undefined;
+
 wizard.$subscribe((mutation, state) => {
-    console.log(state.documentGroup?.job_status);
+    wizard.processingDocuments = Number(state.documentGroup?.job_status);
+    if (wizard.processingDocuments === 1) {
+        wizard.processingDocumentsProgress = String(
+            state.documentGroup?.job_status_text
+        );
+    }
+
+    if (lastRunResult !== state.documentGroup?.job_status) {
+        // Αν άλλαξε κατάσταση η εργασία και πλέον δεν είναι αποτυχημένη
+        // και ταυτόχρονα έχουμε παλιό μήνυμα αποτυχίας
+        if (state.documentGroup?.job_status !== 3 && lastRunResultText) {
+            errorMessage.value.splice(
+                errorMessage.value.indexOf(lastRunResultText),
+                1
+            );
+        }
+
+        // Αν έσκασε εμφάνισε το σφάλμα
+        if (
+            wizard.processingDocuments === 3 &&
+            state.documentGroup?.job_status_text &&
+            (errorMessage.value.length === 0 ||
+                (errorMessage.value.length !== 0 &&
+                    state.documentGroup?.job_status_text &&
+                    !errorMessage.value.includes(
+                        state.documentGroup?.job_status_text
+                    )))
+        ) {
+            errorMessage.value.push(state.documentGroup?.job_status_text);
+        }
+
+        lastRunResult = state.documentGroup?.job_status;
+        lastRunResultText = state.documentGroup?.job_status_text;
+    }
 });
 
 const beforeUnmount = () => {
@@ -121,10 +157,69 @@ const beforeUnmount = () => {
         ref="stepCounterRef"
         @click-set-step="setStep"
     ></StepCounter>
-    <component
-        :is="currentComponent"
-        :ref="(el: Component) => { componentRef = el }"
-    ></component>
+    <div class="relative">
+        <component
+            :class="wizard.processingDocuments == 1 ? 'blur-sm' : ''"
+            :is="currentComponent"
+            :ref="(el: Component) => { componentRef = el }"
+        ></component>
+        <div
+            class="absolute top-0 left-0 w-full h-full bg-gray-700 opacity-70 rounded-xl"
+            v-if="wizard.processingDocuments == 1"
+        >
+            <div class="flex justify-center items-center h-full">
+                <div class="text-white font-bold text-lg">
+                    Γίνεται επεξεργασία των εγγράφων
+                </div>
+                <div class="text-white font-bold text-lg pl-1">
+                    ({{ wizard.processingDocumentsProgress }})
+                </div>
+                <!-- spinner -->
+                <svg class="h-1/6" viewBox="0 0 50 50">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="50"
+                        height="50"
+                        viewBox="0 0 100 100"
+                        overflow="visible"
+                        fill="#ffffff"
+                        stroke="none"
+                    >
+                        <defs>
+                            <circle id="loader" cx="20" cy="50" r="6" />
+                        </defs>
+                        <use xlink:href="#loader" x="34">
+                            <animate
+                                attributeName="opacity"
+                                values="0;1;0"
+                                dur="1s"
+                                begin="0.33s"
+                                repeatCount="indefinite"
+                            ></animate>
+                        </use>
+                        <use xlink:href="#loader" x="50">
+                            <animate
+                                attributeName="opacity"
+                                values="0;1;0"
+                                dur="1s"
+                                begin="0.67s"
+                                repeatCount="indefinite"
+                            ></animate>
+                        </use>
+                        <use xlink:href="#loader" x="66">
+                            <animate
+                                attributeName="opacity"
+                                values="0;1;0"
+                                dur="1s"
+                                begin="1.00s"
+                                repeatCount="indefinite"
+                            ></animate>
+                        </use>
+                    </svg>
+                </svg>
+            </div>
+        </div>
+    </div>
     <div class="flex flex-row m-4">
         <button
             class="p-2 rounded-md"

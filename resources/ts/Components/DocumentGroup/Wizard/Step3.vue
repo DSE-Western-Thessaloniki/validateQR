@@ -28,6 +28,7 @@ const save = () => {
 };
 
 const addQR = () => {
+    wizard.processingDocuments = 1;
     axios.post(
         route("documentGroup.addQR", {
             documentGroup: wizard.documentGroup!.id,

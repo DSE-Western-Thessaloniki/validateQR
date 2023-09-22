@@ -9,6 +9,8 @@ export const useWizardStore = defineStore("wizard", {
         backStepAllowed: boolean;
         stepCompleted: boolean;
         totalStepsCompleted: number;
+        processingDocuments: number;
+        processingDocumentsProgress: string;
     } => {
         return {
             documentGroup: undefined,
@@ -17,6 +19,8 @@ export const useWizardStore = defineStore("wizard", {
             backStepAllowed: true,
             stepCompleted: false,
             totalStepsCompleted: 0,
+            processingDocuments: 0,
+            processingDocumentsProgress: "",
         };
     },
 });

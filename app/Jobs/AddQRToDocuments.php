@@ -40,7 +40,11 @@ class AddQRToDocuments implements ShouldQueue, ShouldBeUnique
 
         $documents = $this->documentGroup->documents()->get();
 
-        foreach ($documents as $document) {
+        $this->documentGroup->job_status = DocumentGroup::JobInProgress;
+        $this->documentGroup->job_status_text = "";
+        $this->documentGroup->save();
+
+        foreach ($documents as $index=>$document) {
             $filename = storage_path()."/app/{$this->documentGroup->id}/{$document->id}.pdf";
             $output_filename = storage_path()."/app/{$this->documentGroup->id}/qr/{$document->id}.pdf";
             logger("Adding QR to {$filename}");
@@ -109,6 +113,10 @@ class AddQRToDocuments implements ShouldQueue, ShouldBeUnique
 
             $document->state = Document::WithQR;
             $document->save();
+
+            $this->documentGroup->job_status_text = sprintf("%.2f", $index / $documents->count() * 100) . "%";
+            $this->documentGroup->save();
+
             usleep(250000);
         }
 
