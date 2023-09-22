@@ -15,6 +15,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { useWizardStore } from "@/Stores/wizard";
 import axios from "axios";
+import { intervalCollection } from "time-events-manager";
 
 library.add(faChevronLeft, faChevronRight);
 
@@ -91,6 +92,9 @@ const refreshDocumentGroup = () => {
         wizard.documentGroup = response.data;
     });
 };
+
+// Αφαίρεσε τυχόν υπολειπόμενα setInterval (Χρήσιμο ειδικά στο development)
+intervalCollection.removeAll();
 
 const intervalID = setInterval(refreshDocumentGroup, 2000);
 
