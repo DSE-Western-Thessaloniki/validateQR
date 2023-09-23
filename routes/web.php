@@ -36,6 +36,7 @@ Route::middleware([
     })->name('dashboard');
 
     Route::post('/document/storeMany', [DocumentController::class, 'storeMany'])->name('document.storeMany');
+    Route::post('/document/storeManySigned', [DocumentController::class, 'storeManySigned'])->name('document.storeManySigned');
     Route::resource('document', DocumentController::class);
 
     Route::post('/documentGroup/{documentGroup}/addQR', [DocumentGroupController::class, 'addQR'])->name('documentGroup.addQR');

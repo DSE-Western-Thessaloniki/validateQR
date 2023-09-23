@@ -7,6 +7,7 @@ use App\Http\Requests\StoreManyDocumentsRequest;
 use App\Http\Requests\UpdateDocumentRequest;
 use App\Models\Document;
 use App\Models\DocumentGroup;
+use Illuminate\Database\Query\Builder;
 
 class DocumentController extends Controller
 {
@@ -64,6 +65,55 @@ class DocumentController extends Controller
 
         $documentGroup->step++;
         $documentGroup->save();
+
+        return response()->json($documents);
+    }
+
+    public function storeManySigned(StoreManyDocumentsRequest $request)
+    {
+        $validated = $request->validated();
+
+        $documents = [];
+
+        $documentGroup = DocumentGroup::findOrFail($validated['document_group_id']);
+
+        if ($request->file('documents')) {
+            foreach ($request->file('documents') as $file) {
+                $filename = mb_ereg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', $file->getClientOriginalName());
+                // Remove any runs of periods
+                $filename = mb_ereg_replace("([\.]{2,})", '', $filename);
+
+                $document = Document::where('document_group_id', $validated['document_group_id'])
+                    ->where(function (Builder $query) use ($filename) {
+                        $query->where('filename', $filename)
+                            ->orWhere('filename', str_replace('_signed', '', $filename));
+                    })
+                    ->get();
+
+                // Αν δεν έχει ανέβει ήδη το σχετικό έγγραφο απλά αγνόησέ το
+                if (!$document) {
+                    continue;
+                }
+
+                $file->storeAs($validated['document_group_id'] . '/signed/', "{$document->id}.pdf");
+
+                $document->state = Document::WithQRAndSignature;
+                $document->save();
+
+
+                $documents[] = $document;
+            }
+        }
+
+        $documentsWithoutSignature = Document::where('document_group_id', $validated['document_group_id'])
+            ->where('state', '<>', Document::WithQRAndSignature)
+            ->count();
+
+        // Αν έχουμε υπογραφές για όλα τα έγγραφα, αύξησε το βήμα
+        if ($documentsWithoutSignature === 0) {
+            $documentGroup->step++;
+            $documentGroup->save();
+        }
 
         return response()->json($documents);
     }
