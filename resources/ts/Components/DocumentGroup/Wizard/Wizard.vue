@@ -146,7 +146,7 @@ const beforeUnmount = () => {
 <template>
     <div
         v-if="errorMessage.length"
-        class="p-4 border border-2 border-red-300 bg-red-200 rounded"
+        class="p-4 border-2 border-red-300 bg-red-200 rounded"
     >
         <ul class="px-4">
             <li v-for="error in errorMessage" class="list-disc">{{ error }}</li>
