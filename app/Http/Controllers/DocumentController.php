@@ -124,7 +124,14 @@ class DocumentController extends Controller
      */
     public function show(Document $document)
     {
-        //
+        if (!file_exists(storage_path("app"). "/{$document->document_group_id}/signed/{$document->id}.pdf")) {
+            return abort(404);
+        }
+
+        return response()->download(
+            storage_path("app"). "/{$document->document_group_id}/signed/{$document->id}.pdf",
+            "{$document->filename}"
+        );
     }
 
     /**
