@@ -7,7 +7,7 @@ use App\Http\Requests\StoreManyDocumentsRequest;
 use App\Http\Requests\UpdateDocumentRequest;
 use App\Models\Document;
 use App\Models\DocumentGroup;
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 
 class DocumentController extends Controller
 {
@@ -88,13 +88,14 @@ class DocumentController extends Controller
                         $query->where('filename', $filename)
                             ->orWhere('filename', str_replace('_signed', '', $filename));
                     })
-                    ->get();
+                    ->first();
 
                 // Αν δεν έχει ανέβει ήδη το σχετικό έγγραφο απλά αγνόησέ το
                 if (!$document) {
                     continue;
                 }
 
+                logger($document);
                 $file->storeAs($validated['document_group_id'] . '/signed/', "{$document->id}.pdf");
 
                 $document->state = Document::WithQRAndSignature;
