@@ -64,6 +64,11 @@ const save = () => {
             .then((response) => {
                 if (response.status === 200) {
                     wizard.documentGroup = response.data;
+
+                    // Εφόσον όλα πήγαν καλά άνοιξε το group για επεξεργασία
+                    window.location.href = route("documentGroup.edit", {
+                        documentGroup: wizard.documentGroup!.id,
+                    });
                 }
                 resolve("OK");
             })
@@ -84,6 +89,12 @@ const save = () => {
     });
 };
 
+const onKeyPress = (event: KeyboardEvent) => {
+    if (event.key === "Enter") {
+        save();
+    }
+};
+
 defineExpose({ save });
 </script>
 <template>
@@ -94,6 +105,7 @@ defineExpose({ save });
             type="text"
             placeholder="Όνομα"
             v-model="documentGroupName"
+            @keypress="onKeyPress"
         />
         <div v-if="wizard.validationErrors?.name">
             <div
