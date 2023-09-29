@@ -88,9 +88,13 @@ const nextStep = () => {
 };
 
 const refreshDocumentGroup = () => {
-    axios.get("/documentGroup/" + props.documentGroup.id).then((response) => {
-        wizard.documentGroup = response.data;
-    });
+    if (currentStep.value > 1) {
+        axios
+            .get("/documentGroup/" + wizard.documentGroup!.id)
+            .then((response) => {
+                wizard.documentGroup = response.data;
+            });
+    }
 };
 
 // Αφαίρεσε τυχόν υπολειπόμενα setInterval (Χρήσιμο ειδικά στο development)
