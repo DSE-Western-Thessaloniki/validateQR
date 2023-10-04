@@ -4,8 +4,25 @@ import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import axios from "axios";
 import route from "ziggy-js";
+import { getDocuments } from "./utilities";
+import { watch } from "vue";
 
 const wizard = useWizardStore();
+
+const isStepCompleted = () =>
+    documentsWithoutQR() === 0 &&
+    wizard.documents?.length !== 0 &&
+    wizard.documentGroup?.job_status === 2;
+
+const updateDocumentView = async () => {
+    const d = await getDocuments(wizard.documentGroup!.id);
+
+    if (Array.isArray(d.documents)) {
+        wizard.documents = d.documents;
+    }
+
+    wizard.stepCompleted = isStepCompleted();
+};
 
 const documentsWithoutQR = () => {
     if (!wizard.documents) {
@@ -18,10 +35,7 @@ const documentsWithoutQR = () => {
 };
 
 // Κάνε έλεγχο μήπως έχουμε ήδη ολοκληρώσει το βήμα
-wizard.stepCompleted =
-    documentsWithoutQR() === 0 &&
-    wizard.documents?.length !== 0 &&
-    wizard.documentGroup?.job_status === 2;
+wizard.stepCompleted = isStepCompleted();
 
 // Δεν έχουμε κάτι να αποθηκεύσουμε από την φόρμα
 const save = () => {
@@ -38,6 +52,13 @@ const addQR = () => {
         })
     );
 };
+
+watch(
+    () => wizard.documentGroup,
+    () => {
+        updateDocumentView();
+    }
+);
 
 defineExpose({ save });
 </script>
