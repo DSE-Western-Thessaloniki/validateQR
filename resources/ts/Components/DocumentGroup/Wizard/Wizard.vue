@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, markRaw, type Component } from "vue";
+import { ref, markRaw, type Component, onBeforeUnmount } from "vue";
 import Step1 from "./Step1.vue";
 import Step2 from "./Step2.vue";
 import Step3 from "./Step3.vue";
@@ -142,9 +142,9 @@ wizard.$subscribe((mutation, state) => {
     }
 });
 
-const beforeUnmount = () => {
+onBeforeUnmount(() => {
     clearInterval(intervalID);
-};
+});
 </script>
 
 <template>
