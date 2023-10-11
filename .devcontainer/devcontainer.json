@@ -57,7 +57,8 @@
 				"GitHub.vscode-pull-request-github",
 				"bradlc.vscode-tailwindcss",
 				"msamgan.laravel-pint-vscode",
-				"TabNine.tabnine-vscode"
+				"TabNine.tabnine-vscode",
+				"nhedger.inertia"
 			],
             "settings": {}
         }
