@@ -32,4 +32,18 @@ declare namespace App.Models {
         img_scale: number;
         img_filename: string;
     }
+
+    export interface User {
+        id: string;
+        username: string;
+        name: string;
+        email: string;
+        email_verified_at: Date;
+        two_factor_confirmed_at?: Date;
+        current_team_id?: number;
+        profile_photo_path?: string;
+        created_at: Date;
+        updated_at: Date;
+        profile_photo_url: string;
+    }
 }

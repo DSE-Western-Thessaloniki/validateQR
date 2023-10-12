@@ -3,6 +3,8 @@
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\DocumentGroupController;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\UserController;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -20,7 +22,7 @@ use Inertia\Inertia;
 Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
+        // 'canRegister' => Route::has('register'),
         // 'laravelVersion' => Application::VERSION,
         // 'phpVersion' => PHP_VERSION,
     ]);
@@ -47,7 +49,5 @@ Route::middleware([
 
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
     Route::post('/settings', [SettingsController::class, 'store'])->name('settings.store');
-    Route::get('/users', function () {
-        return Inertia::render('Users');
-    })->name('users');
+    Route::resource('user', UserController::class);
 });
