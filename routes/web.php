@@ -26,7 +26,7 @@ Route::get('/', function () {
     ]);
 });
 
-Route::resource('document', DocumentController::class)->only(['show']);
+Route::middleware(['throttle:document'])->resource('document', DocumentController::class)->only(['show']);
 
 Route::middleware([
     'auth:sanctum',
