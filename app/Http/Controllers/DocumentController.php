@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateDocumentRequest;
 use App\Models\Document;
 use App\Models\DocumentGroup;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class DocumentController extends Controller
 {
@@ -122,10 +123,18 @@ class DocumentController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Document $document)
+    public function show(string $id)
     {
+        // Δες αν υπάρχει το αναγνωριστικό του εγγράφου
+        try {
+            $document = Document::findOrFail($id);
+        } catch (ModelNotFoundException $e) {
+            return inertia('Error/DocumentNotFound');
+        }
+
+        // Έλεγξε μήπως δεν έχει πάρει ψηφιακή υπογραφή
         if (!file_exists(storage_path("app"). "/{$document->document_group_id}/signed/{$document->id}.pdf")) {
-            return abort(404);
+            return inertia('Error/DocumentNotFound');
         }
 
         return response()->download(
