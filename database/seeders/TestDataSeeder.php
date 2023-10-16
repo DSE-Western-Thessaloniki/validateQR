@@ -19,6 +19,7 @@ class TestDataSeeder extends Seeder
         $users->push(User::factory()->create([
             'name' => 'Admin',
             'username' => 'admin',
+            'role' => 255
         ]));
 
         $users = $users->merge(User::factory(50)->create());

@@ -34,10 +34,11 @@ const props = defineProps<{
                             <div
                                 class="flex flex-wrap flex-row bg-white mx-4 my-4 rounded-lg p-4 shadow-lg content-center"
                             >
-                                <div class="py-2">
+                                <div class="py-2 my-auto">
                                     {{ index + 1 }}. {{ user.name }}
                                 </div>
-                                <span class="text-blue-500 mx-1 py-2 grow"
+                                <span
+                                    class="text-blue-500 mx-1 py-2 grow my-auto"
                                     >({{ user.username }})</span
                                 >
                                 <Link
