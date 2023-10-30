@@ -49,5 +49,5 @@ Route::middleware([
 
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
     Route::post('/settings', [SettingsController::class, 'store'])->name('settings.store');
-    Route::resource('user', UserController::class);
+    Route::resource('user', UserController::class)->except(['show']);
 });

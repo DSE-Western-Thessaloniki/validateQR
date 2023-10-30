@@ -45,5 +45,6 @@ declare namespace App.Models {
         created_at: Date;
         updated_at: Date;
         profile_photo_url: string;
+        role: number;
     }
 }

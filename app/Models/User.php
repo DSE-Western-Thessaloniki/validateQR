@@ -19,6 +19,9 @@ class User extends Authenticatable
     use TwoFactorAuthenticatable;
     use HasUlids;
 
+    public const Author = 100;
+    public const Administrator = 255;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -26,6 +29,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'username',
         'email',
         'password',
         'role'

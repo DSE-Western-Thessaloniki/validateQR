@@ -1,14 +1,38 @@
 <script setup lang="ts">
+import Message from "@/Components/Message.vue";
 import AppLayout from "@/Layouts/AppLayout.vue";
-import { faPencil, faPlus } from "@fortawesome/free-solid-svg-icons";
+import {
+    faPencil,
+    faPlus,
+    faTrash,
+    faUser,
+    faUserNinja,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { Link } from "@inertiajs/vue3";
-import { TransitionGroup } from "vue";
+import { Link, usePage } from "@inertiajs/vue3";
+import { TransitionGroup, useAttrs } from "vue";
 import route from "ziggy-js";
 
 const props = defineProps<{
     users: App.Models.User[];
 }>();
+
+const page = usePage<{
+    auth: {
+        user: App.Models.User;
+    };
+}>();
+
+const attrs = useAttrs() as {
+    flash: {
+        message: string;
+        success: string;
+        danger: string;
+        warning: string;
+    };
+};
+
+console.log(page);
 </script>
 <template>
     <AppLayout title="Χρήστες">
@@ -22,6 +46,18 @@ const props = defineProps<{
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="overflow-hidden sm:rounded-lg">
                     <div class="m-4 py-2">
+                        <Message
+                            class="mb-5"
+                            type="success"
+                            v-if="attrs.flash.success"
+                            >{{ attrs.flash.success }}</Message
+                        >
+                        <Message
+                            class="mb-5"
+                            type="danger"
+                            v-if="attrs.flash.danger"
+                            >{{ attrs.flash.danger }}</Message
+                        >
                         <Link
                             :href="route('user.create')"
                             class="bg-blue-500 px-4 py-3 rounded-md shadow-lg"
@@ -35,16 +71,35 @@ const props = defineProps<{
                                 class="flex flex-wrap flex-row bg-white mx-4 my-4 rounded-lg p-4 shadow-lg content-center"
                             >
                                 <div class="py-2 my-auto">
-                                    {{ index + 1 }}. {{ user.name }}
+                                    {{ index + 1 }}.
+                                    <FontAwesomeIcon
+                                        v-if="user.role === 255"
+                                        :icon="faUserNinja"
+                                        class="mx-1 text-red-500"
+                                    />
+                                    <FontAwesomeIcon
+                                        v-if="user.role === 100"
+                                        :icon="faUser"
+                                        class="mx-1"
+                                    />
+                                    {{ user.name }}
                                 </div>
                                 <span
                                     class="text-blue-500 mx-1 py-2 grow my-auto"
                                     >({{ user.username }})</span
                                 >
                                 <Link
-                                    href=""
+                                    :href="route('user.edit', [user.id])"
                                     class="transition ease-in-out duration-300 mx-1 hover:bg-sky-300 hover:shadow-xl hover:-translate-y-0.5 rounded-md px-3 py-2"
                                     ><FontAwesomeIcon :icon="faPencil"
+                                /></Link>
+                                <Link
+                                    v-if="user.id !== page.props.auth.user.id"
+                                    :href="route('user.destroy', [user.id])"
+                                    method="delete"
+                                    as="button"
+                                    class="transition ease-in-out duration-300 mx-1 hover:bg-red-300 hover:shadow-xl hover:-translate-y-0.5 rounded-md px-3 py-2"
+                                    ><FontAwesomeIcon :icon="faTrash"
                                 /></Link>
                             </div>
                         </div>

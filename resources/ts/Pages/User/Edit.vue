@@ -10,17 +10,21 @@ import route from "ziggy-js";
 import DropdownList from "@/Components/DropdownList.vue";
 import AppLayout from "@/Layouts/AppLayout.vue";
 
+const props = defineProps<{
+    user: App.Models.User;
+}>();
+
 const form = useForm({
-    name: "",
-    username: "",
-    email: "",
+    name: props.user.name,
+    username: props.user.username,
+    email: props.user.email,
     password: "",
     password_confirmation: "",
-    role: "100",
+    role: props.user.role,
 });
 
 const submit = () => {
-    form.post(route("user.store"), {
+    form.put(route("user.update", props.user), {
         onFinish: () => form.reset("password", "password_confirmation"),
     });
 };
@@ -64,6 +68,7 @@ const submit = () => {
                             type="text"
                             class="mt-1 block w-full"
                             required
+                            autofocus
                             autocomplete="username"
                         />
                         <InputError
@@ -92,7 +97,6 @@ const submit = () => {
                             v-model="form.password"
                             type="password"
                             class="mt-1 block w-full"
-                            required
                             autocomplete="new-password"
                         />
                         <InputError
@@ -111,7 +115,6 @@ const submit = () => {
                             v-model="form.password_confirmation"
                             type="password"
                             class="mt-1 block w-full"
-                            required
                             autocomplete="new-password"
                         />
                         <InputError
