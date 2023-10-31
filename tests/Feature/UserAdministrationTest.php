@@ -23,7 +23,7 @@ test("administrator can create a new user", function() {
         ])
         ->assertRedirect(route('user.index'))
         ->assertSessionHas('success', 'Ο νέος χρήστης δημιουργήθηκε!');
-})->only();
+});
 
 test("author cannot create a new user", function() {
     $author = User::factory()
@@ -44,7 +44,7 @@ test("author cannot create a new user", function() {
             'role' => User::Administrator
         ])
         ->assertForbidden();
-})->only();
+});
 
 test("administrator can update a user", function() {
     $admin = User::factory()
@@ -79,7 +79,7 @@ test("administrator can update a user", function() {
         'password' => 'password',
         'role' => User::Administrator
     ]);
-})->only();
+});
 
 test("author cannot edit a user", function() {
     $author = User::factory()
@@ -104,7 +104,7 @@ test("author cannot edit a user", function() {
             'role' => User::Administrator
         ])
         ->assertForbidden();
-})->only();
+});
 
 test("administrator can delete a user", function() {
     $admin = User::factory()
@@ -120,7 +120,7 @@ test("administrator can delete a user", function() {
         ->assertSessionHas('success', 'O χρήστης διαγράφηκε!');
 
     $this->assertDatabaseMissing('users', $user->toArray());
-})->only();
+});
 
 test("author cannot delete a user", function() {
     $author = User::factory()
@@ -133,4 +133,4 @@ test("author cannot delete a user", function() {
     $this->actingAs($author)
         ->delete(route('user.destroy', $user))
         ->assertForbidden();
-})->only();
+});
