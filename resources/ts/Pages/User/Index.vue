@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Message from "@/Components/Message.vue";
 import AppLayout from "@/Layouts/AppLayout.vue";
+import type { PageWithFlashProps } from "@/flash-message";
 import {
     faPencil,
     faPlus,
@@ -17,22 +18,7 @@ const props = defineProps<{
     users: App.Models.User[];
 }>();
 
-const page = usePage<{
-    auth: {
-        user: App.Models.User;
-    };
-}>();
-
-const attrs = useAttrs() as {
-    flash: {
-        message: string;
-        success: string;
-        danger: string;
-        warning: string;
-    };
-};
-
-console.log(page);
+const page = usePage<PageWithFlashProps>();
 </script>
 <template>
     <AppLayout title="Χρήστες">
@@ -49,14 +35,14 @@ console.log(page);
                         <Message
                             class="mb-5"
                             type="success"
-                            v-if="attrs.flash.success"
-                            >{{ attrs.flash.success }}</Message
+                            v-if="page.props.flash.success"
+                            >{{ page.props.flash.success }}</Message
                         >
                         <Message
                             class="mb-5"
                             type="danger"
-                            v-if="attrs.flash.danger"
-                            >{{ attrs.flash.danger }}</Message
+                            v-if="page.props.flash.danger"
+                            >{{ page.props.flash.danger }}</Message
                         >
                         <Link
                             :href="route('user.create')"
