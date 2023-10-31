@@ -64,4 +64,14 @@ class User extends Authenticatable
     protected $appends = [
         'profile_photo_url',
     ];
+
+    public function isAdministrator(): bool
+    {
+        return $this->role === User::Administrator;
+    }
+
+    public function isAuthor(): bool
+    {
+        return $this->role === User::Author;
+    }
 }

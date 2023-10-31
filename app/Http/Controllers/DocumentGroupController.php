@@ -15,6 +15,14 @@ use Inertia\Inertia;
 class DocumentGroupController extends Controller
 {
     /**
+     * Create the controller instance.
+     */
+    public function __construct()
+    {
+        $this->authorizeResource(DocumentGroup::class, 'documentGroup');
+    }
+
+    /**
      * Display a listing of the resource.
      */
     public function index()

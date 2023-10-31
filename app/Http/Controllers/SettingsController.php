@@ -8,6 +8,15 @@ use Inertia\Inertia;
 
 class SettingsController extends Controller
 {
+
+    /**
+     * Create the controller instance.
+     */
+    public function __construct()
+    {
+        $this->authorizeResource(Settings::class, 'settings');
+    }
+
     /**
      * Display a listing of the resource.
      */

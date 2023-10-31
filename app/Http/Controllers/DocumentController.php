@@ -12,6 +12,15 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class DocumentController extends Controller
 {
+
+    /**
+     * Create the controller instance.
+     */
+    public function __construct()
+    {
+        $this->authorizeResource(Document::class, 'document');
+    }
+
     /**
      * Display a listing of the resource.
      */

@@ -2,26 +2,31 @@
 
 namespace App\Policies;
 
-use App\Models\Option;
+use App\Models\Settings;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
-class OptionPolicy
+class SettingsPolicy
 {
+
+    public function before(User $user, $ability)
+    {
+        return $user->isAdministrator() ? true : null;
+    }
+
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        //
+        return false;
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Option $option): bool
+    public function view(User $user, Settings $settings): bool
     {
-        //
+        return false;
     }
 
     /**
@@ -29,38 +34,38 @@ class OptionPolicy
      */
     public function create(User $user): bool
     {
-        //
+        return false;
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Option $option): bool
+    public function update(User $user, Settings $settings): bool
     {
-        //
+        return false;
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Option $option): bool
+    public function delete(User $user, Settings $settings): bool
     {
-        //
+        return false;
     }
 
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, Option $option): bool
+    public function restore(User $user, Settings $settings): bool
     {
-        //
+        return false;
     }
 
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, Option $option): bool
+    public function forceDelete(User $user, Settings $settings): bool
     {
-        //
+        return false;
     }
 }
