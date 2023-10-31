@@ -37,7 +37,7 @@ const page = usePage<PageWithFlashProps>();
 <template>
     <Head title="Log in" />
 
-    <AuthenticationCard>
+    <AuthenticationCard class="min-h-screen">
         <template #logo>
             <div class="font-bold text-5xl text-red-600">evaluateQR</div>
         </template>
