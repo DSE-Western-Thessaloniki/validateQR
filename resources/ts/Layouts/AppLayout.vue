@@ -235,7 +235,7 @@ const logout = () => {
                                                 class="h-8 w-8 rounded-full object-cover"
                                                 :src="
                                                     $page.props.auth.user
-                                                        .profile_photo_url
+                                                        .profile_photo_path
                                                 "
                                                 :alt="
                                                     $page.props.auth.user.name
@@ -380,7 +380,7 @@ const logout = () => {
                                 <img
                                     class="h-10 w-10 rounded-full object-cover"
                                     :src="
-                                        $page.props.auth.user.profile_photo_url
+                                        $page.props.auth.user.profile_photo_path
                                     "
                                     :alt="$page.props.auth.user.name"
                                 />

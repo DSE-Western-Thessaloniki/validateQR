@@ -44,7 +44,6 @@ declare namespace App.Models {
         profile_photo_path?: string;
         created_at: Date;
         updated_at: Date;
-        profile_photo_url: string;
         role: number;
     }
 }

@@ -71,4 +71,22 @@ class UserFactory extends Factory
             'ownedTeams'
         );
     }
+
+    public function admin(): static
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'role' => User::Administrator,
+            ];
+        });
+    }
+
+    public function author(): static
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'role' => User::Author,
+            ];
+        });
+    }
 }
