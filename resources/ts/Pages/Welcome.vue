@@ -45,7 +45,7 @@ defineProps({
 
         <div class="max-w-7xl mx-auto p-6 lg:p-8">
             <div class="flex justify-center">
-                <h1 class="font-bold text-5xl text-red-600">evaluateQR</h1>
+                <h1 class="font-bold text-5xl text-red-600">validateQR</h1>
             </div>
 
             <div class="mt-16"></div>

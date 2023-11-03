@@ -49,7 +49,7 @@ class AddQRToDocuments implements ShouldQueue, ShouldBeUnique
             $output_filename = storage_path()."/app/{$this->documentGroup->id}/qr/{$document->id}.pdf";
             logger("Adding QR to {$filename}");
             $output = null;
-            $document_link = "https://srv-dide-v.thess.sch.gr/evaluateQR/document/{$document->id}";
+            $document_link = "https://srv-dide-v.thess.sch.gr/validateQR/document/{$document->id}";
 
             // Δημιούργησε τον φάκελο qr μέσα στον φάκελο της ομάδας γιατί τον χρειαζόμαστε
             if (!file_exists(storage_path(). "/app/{$this->documentGroup->id}/qr")) {

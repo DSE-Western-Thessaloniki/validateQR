@@ -39,7 +39,7 @@ const page = usePage<PageWithFlashProps>();
 
     <AuthenticationCard class="min-h-screen">
         <template #logo>
-            <div class="font-bold text-5xl text-red-600">evaluateQR</div>
+            <div class="font-bold text-5xl text-red-600">validateQR</div>
         </template>
 
         <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
