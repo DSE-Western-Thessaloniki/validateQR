@@ -48,7 +48,7 @@ const logout = () => {
                                     :href="route('dashboard')"
                                     class="text-lg font-bold text-red-600"
                                 >
-                                    evaluateQR
+                                    validateQR
                                 </Link>
                             </div>
 
