@@ -1,5 +1,5 @@
 <script setup>
-import { Head, Link } from "@inertiajs/vue3";
+import { Head, Link, useForm } from "@inertiajs/vue3";
 import route from "ziggy-js";
 
 defineProps({
@@ -8,6 +8,16 @@ defineProps({
     laravelVersion: String,
     phpVersion: String,
 });
+
+const form = useForm({
+    document: "",
+});
+
+const submit = () => {
+    form.get(route("document.show", { document: form.document }), {
+        onFinish: () => form.reset("code"),
+    });
+};
 </script>
 
 <template>
@@ -59,6 +69,25 @@ defineProps({
                     Λήψη επικυρωμένων αντιγράφων εγγράφων με χρήση QRCode
                 </div>
             </div>
+            <form
+                @submit.prevent="submit"
+                class="flex justify-center mt-16 sm:justify-between"
+            >
+                <input
+                    type="text"
+                    name="code"
+                    class="block w-full rounded-l-md"
+                    v-model="form.document"
+                    placeholder="Εισάγετε εδώ τον κωδικό του εγγράφου"
+                />
+                <button
+                    type="submit"
+                    class="inline-flex items-center px-4 py-2 bg-red-800 rounded-r-md font-semibold text-xs text-white tracking-widest hover:bg-red-600 disabled:opacity-25 disabled:bg-gray-500 transition"
+                    :disabled="form.processing"
+                >
+                    Αναζήτηση
+                </button>
+            </form>
         </div>
     </div>
 </template>

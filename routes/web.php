@@ -4,7 +4,7 @@ use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\DocumentGroupController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\UserController;
-use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -28,7 +28,12 @@ Route::get('/', function () {
     ]);
 });
 
-Route::middleware(['throttle:document'])->resource('document', DocumentController::class)->only(['show']);
+Route::middleware(['throttle:document'])
+    ->resource('document', DocumentController::class)
+    ->only(['show'])
+    ->missing(function (Request $request) {
+        return Inertia::render('Error/DocumentNotFound');
+    });
 
 Route::middleware([
     'auth:sanctum',

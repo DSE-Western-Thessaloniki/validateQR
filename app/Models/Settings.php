@@ -12,14 +12,8 @@ class Settings extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'qr_side',
-        'qr_top_margin',
-        'qr_side_margin',
-        'qr_scale',
-        'img_side',
-        'img_top_margin',
-        'img_side_margin',
+        'img_x',
+        'img_y',
         'img_scale',
-        'img_filename',
     ];
 }

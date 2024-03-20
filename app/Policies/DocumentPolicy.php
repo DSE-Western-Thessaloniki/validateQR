@@ -26,7 +26,7 @@ class DocumentPolicy
      */
     public function view(User $user, Document $document): bool
     {
-        return false;
+        return true;
     }
 
     /**
