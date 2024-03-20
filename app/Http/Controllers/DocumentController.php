@@ -132,15 +132,8 @@ class DocumentController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Document $document)
     {
-        // Δες αν υπάρχει το αναγνωριστικό του εγγράφου
-        try {
-            $document = Document::findOrFail($id);
-        } catch (ModelNotFoundException $e) {
-            return inertia('Error/DocumentNotFound');
-        }
-
         // Έλεγξε μήπως δεν έχει πάρει ψηφιακή υπογραφή
         if (!file_exists(storage_path("app"). "/{$document->document_group_id}/signed/{$document->id}.pdf")) {
             return inertia('Error/DocumentNotFound');

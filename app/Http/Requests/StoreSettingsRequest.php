@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreSettingsRequest extends FormRequest
 {
@@ -22,16 +23,9 @@ class StoreSettingsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'image' => ['file', 'mimes:png,jpg', 'nullable'],
-            'qr_side' => ['required','numeric','min:0','max:2'],
-            'qr_top_margin' => ['required','numeric','min:0'],
-            'qr_side_margin' => ['required','numeric','min:0'],
-            'qr_scale' => ['required','numeric','min:0'],
-            'img_side' => ['required','numeric','min:0','max:2'],
-            'img_top_margin' => ['required','numeric','min:0'],
-            'img_side_margin' => ['required','numeric','min:0'],
+            'img_x' => ['required','numeric','min:0'],
+            'img_y' => ['required','numeric','min:0'],
             'img_scale' => ['required','numeric','min:0'],
-            'remove_image' => ['required', 'numeric', 'min:0', 'max:1'],
         ];
     }
 }
