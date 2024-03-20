@@ -1,7 +1,9 @@
 // https://aka.ms/devcontainer.json
 {
     "name": "validateQR",
-    "dockerComposeFile": ["../docker-compose.yml"],
+    "dockerComposeFile": [
+        "../docker-compose.yml"
+    ],
     "service": "laravel.test",
     "workspaceFolder": "/var/www/html",
     "customizations": {
@@ -52,7 +54,6 @@
                 "esbenp.prettier-vscode",
                 "Vue.volar",
                 "Cardinal90.multi-cursor-case-preserve",
-                "Vue.vscode-typescript-vue-plugin",
                 "yoavbls.pretty-ts-errors",
                 "GitHub.vscode-pull-request-github",
                 "bradlc.vscode-tailwindcss",
