@@ -54,5 +54,8 @@ Route::middleware([
 
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
     Route::post('/settings', [SettingsController::class, 'store'])->name('settings.store');
+    Route::post('/user/{user}/toggleActive', [UserController::class, 'toggleActive'])
+        ->middleware('can:update,App\Models\User')
+        ->name('user.toggleActive');
     Route::resource('user', UserController::class)->except(['show']);
 });

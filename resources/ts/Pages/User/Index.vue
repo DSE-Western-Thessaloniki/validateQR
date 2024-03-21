@@ -2,7 +2,10 @@
 import Message from "@/Components/Message.vue";
 import AppLayout from "@/Layouts/AppLayout.vue";
 import type { PageWithFlashProps } from "@/flash-message";
+import type { PageWithAuthProps } from "@/page-props-auth";
 import {
+    faCircleCheck,
+    faCircleXmark,
     faPencil,
     faPlus,
     faTrash,
@@ -10,7 +13,8 @@ import {
     faUserNinja,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { Link, usePage } from "@inertiajs/vue3";
+import { Link, router, usePage } from "@inertiajs/vue3";
+import axios from "axios";
 import { TransitionGroup, useAttrs } from "vue";
 import route from "ziggy-js";
 
@@ -18,7 +22,27 @@ const props = defineProps<{
     users: App.Models.User[];
 }>();
 
-const page = usePage<PageWithFlashProps>();
+const page = usePage<PageWithFlashProps & PageWithAuthProps>();
+
+const toggleActive = (user: App.Models.User) => {
+    axios
+        .post(route("user.toggleActive", user))
+        .then((response) => {
+            console.log(response);
+            if (response.status === 200 && response.data.success === true) {
+                console.log("Success");
+                router.reload({
+                    only: ["users"],
+                    preserveScroll: true,
+                });
+            } else {
+                console.log("Error");
+            }
+        })
+        .catch((reason) => {
+            console.log(`Error: ${reason}`);
+        });
+};
 </script>
 <template>
     <AppLayout title="Χρήστες">
@@ -54,7 +78,10 @@ const page = usePage<PageWithFlashProps>();
                     <TransitionGroup name="list" tag="div">
                         <div v-for="(user, index) in users" :key="user.id">
                             <div
-                                class="flex flex-wrap flex-row bg-white mx-4 my-4 rounded-lg p-4 shadow-lg content-center"
+                                class="flex flex-wrap flex-row mx-4 my-4 rounded-lg p-4 shadow-lg content-center"
+                                :class="
+                                    user.active ? 'bg-white' : 'bg-gray-300'
+                                "
                             >
                                 <div class="py-2 my-auto">
                                     {{ index + 1 }}.
@@ -70,23 +97,50 @@ const page = usePage<PageWithFlashProps>();
                                     />
                                     {{ user.name }}
                                 </div>
-                                <span
-                                    class="text-blue-500 mx-1 py-2 grow my-auto"
+                                <span class="text-blue-500 mx-1 py-2"
                                     >({{ user.username }})</span
                                 >
+                                <span
+                                    v-if="!user.active"
+                                    class="text-red-500 mx-1 py-2"
+                                    >(Ανενεργός χρήστης)</span
+                                >
+                                <span class="grow my-auto"></span>
                                 <Link
                                     :href="route('user.edit', [user.id])"
                                     class="transition ease-in-out duration-300 mx-1 hover:bg-sky-300 hover:shadow-xl hover:-translate-y-0.5 rounded-md px-3 py-2"
-                                    ><FontAwesomeIcon :icon="faPencil"
-                                /></Link>
+                                >
+                                    <FontAwesomeIcon :icon="faPencil" />
+                                </Link>
+                                <button
+                                    v-if="
+                                        user.id !== page.props.auth.user.id &&
+                                        !user.active
+                                    "
+                                    @click="toggleActive(user)"
+                                    class="transition ease-in-out duration-300 mx-1 hover:bg-green-300 hover:shadow-xl hover:-translate-y-0.5 rounded-md px-3 py-2"
+                                >
+                                    <FontAwesomeIcon :icon="faCircleCheck" />
+                                </button>
+                                <button
+                                    v-if="
+                                        user.id !== page.props.auth.user.id &&
+                                        user.active
+                                    "
+                                    @click="toggleActive(user)"
+                                    class="transition ease-in-out duration-300 mx-1 hover:bg-orange-300 hover:shadow-xl hover:-translate-y-0.5 rounded-md px-3 py-2"
+                                >
+                                    <FontAwesomeIcon :icon="faCircleXmark" />
+                                </button>
                                 <Link
                                     v-if="user.id !== page.props.auth.user.id"
                                     :href="route('user.destroy', [user.id])"
                                     method="delete"
                                     as="button"
                                     class="transition ease-in-out duration-300 mx-1 hover:bg-red-300 hover:shadow-xl hover:-translate-y-0.5 rounded-md px-3 py-2"
-                                    ><FontAwesomeIcon :icon="faTrash"
-                                /></Link>
+                                >
+                                    <FontAwesomeIcon :icon="faTrash" />
+                                </Link>
                             </div>
                         </div>
                     </TransitionGroup>

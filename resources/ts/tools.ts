@@ -1,3 +1,5 @@
+import { Role } from "./roles";
+
 export function humanReadableFileSize(size: number, precision = 2): string {
     let i = -1;
     const byteUnits = [" kB", " MB", " GB", " TB", "PB", "EB", "ZB", "YB"];
@@ -13,3 +15,11 @@ export function humanReadableFileSize(size: number, precision = 2): string {
 
     return size.toFixed(precision) + byteUnits[i];
 }
+
+export const isAdmin = (user: App.Models.User) => {
+    return user.role === Role.Administrator;
+};
+
+export const isAuthor = (user: App.Models.User) => {
+    return user.role === Role.Author;
+};

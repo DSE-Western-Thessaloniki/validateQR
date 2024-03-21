@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import type { PageWithFlashProps } from "@/flash-message";
+import type { PageWithAuthProps } from "@/page-props-auth";
+import { isAdmin } from "@/tools";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import {
     faHouse,
@@ -10,7 +13,7 @@ import {
     faGears,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { Link } from "@inertiajs/vue3";
+import { Link, usePage } from "@inertiajs/vue3";
 import route from "ziggy-js";
 
 library.add(
@@ -21,6 +24,8 @@ library.add(
     faUsers,
     faLayerGroup
 );
+
+const page = usePage<PageWithFlashProps & PageWithAuthProps>();
 </script>
 
 <template>
@@ -53,37 +58,10 @@ library.add(
                     <div class="mt-2">Ομάδες εγγράφων</div>
                 </div>
             </Link>
-            <!-- <Link href="">
-                <div
-                    class="flex flex-col items-center bg-white shadow p-4 rounded-md hover:shadow-lg"
-                >
-                    <div>
-                        <font-awesome-icon :icon="faBoxArchive" size="2xl" />
-                    </div>
-                    <div class="mt-2">Αρχείο ολοκληρωμένων ενεργειών</div>
-                </div>
-            </Link> -->
-            <!-- <Link href="">
-                <div
-                    class="flex flex-col items-center bg-white shadow p-4 rounded-md hover:shadow-lg"
-                >
-                    <div>
-                        <font-awesome-icon :icon="faFileArrowUp" size="2xl" />
-                    </div>
-                    <div class="mt-2">Ανέβασμα εγγράφων για παραγωγή QR</div>
-                </div>
-            </Link>
-            <Link href="">
-                <div
-                    class="flex flex-col items-center bg-white shadow p-4 rounded-md hover:shadow-lg"
-                >
-                    <div>
-                        <font-awesome-icon :icon="faFileContract" size="2xl" />
-                    </div>
-                    <div class="mt-2">Ανέβασμα υπογεγραμμένων εγγράφων</div>
-                </div>
-            </Link> -->
-            <Link :href="route('settings.index')">
+            <Link
+                :href="route('settings.index')"
+                v-if="isAdmin(page.props.auth.user)"
+            >
                 <div
                     class="flex flex-col items-center bg-white shadow p-4 rounded-md hover:shadow-lg"
                 >
@@ -93,7 +71,10 @@ library.add(
                     <div class="mt-2">Ρυθμίσεις</div>
                 </div>
             </Link>
-            <Link :href="route('user.index')">
+            <Link
+                :href="route('user.index')"
+                v-if="isAdmin(page.props.auth.user)"
+            >
                 <div
                     class="flex flex-col items-center bg-white shadow p-4 rounded-md hover:shadow-lg"
                 >

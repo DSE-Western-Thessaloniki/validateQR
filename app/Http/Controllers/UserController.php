@@ -92,4 +92,15 @@ class UserController extends Controller
                 ->with('danger', 'Η διαγραφή του χρήστη απέτυχε!');
         }
     }
+
+    public function toggleActive(User $user)
+    {
+        $user->active = !$user->active;
+
+        if ($user->save()) {
+            return json_encode(['success' => true, 'message' => 'Η αλλαγή αποθηκεύτηκε επιτυχώς']);
+        }
+
+        return json_encode(['success' => false, 'message' => 'Σφάλμα τροποποίησης λογαριασμού']);
+    }
 }
