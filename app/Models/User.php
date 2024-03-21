@@ -21,6 +21,7 @@ class User extends Authenticatable
     use TwoFactorAuthenticatable;
     use HasUlids;
 
+    // Αν κάνεις αλλαγή εδώ, μην ξεχάσεις να ενημερώσεις και το resources/ts/roles.ts
     public const Author = 100;
     public const Administrator = 255;
 

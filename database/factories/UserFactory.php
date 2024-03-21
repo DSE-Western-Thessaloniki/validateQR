@@ -35,7 +35,8 @@ class UserFactory extends Factory
             'remember_token' => Str::random(10),
             'profile_photo_path' => null,
             'current_team_id' => null,
-            'role' => $this->faker->randomElement([255, 100]) // 255 - Admin, 100 - Author
+            'role' => $this->faker->randomElement([255, 100]), // 255 - Admin, 100 - Author
+            'active' => $this->faker->randomElement([0, 1])
         ];
     }
 
