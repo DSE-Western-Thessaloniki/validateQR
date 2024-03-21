@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 
 class UserController extends Controller
@@ -47,7 +45,7 @@ class UserController extends Controller
             'name' => $validated['name'],
             'username' => $validated['username'],
             'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
+            'password' => $validated['password'],
             'role' => $validated['role']
         ]);
 
