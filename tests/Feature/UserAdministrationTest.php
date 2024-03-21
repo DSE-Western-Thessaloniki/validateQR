@@ -76,7 +76,6 @@ test("administrator can update a user", function() {
         'name' => 'Test User',
         'username' => 'user',
         'email' => 'user@example.com',
-        'password' => 'password',
         'role' => User::Administrator
     ]);
 });
