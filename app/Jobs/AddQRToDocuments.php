@@ -132,11 +132,11 @@ class AddQRToDocuments implements ShouldQueue, ShouldBeUnique
         // Ετοίμασε το κείμενο που θα εισαχθεί στο PDF
         $service = new ImageService();
         $imageText = $service->create(600, 120)
-            ->annotate(5, 30, "Μπορείτε να σαρώσετε τον κωδικό στα αριστερά ή να κάνετε κλικ επάνω του", [ 'fontsize' => 16 ])
-            ->annotate(5, 52, "ή να εισάγετε τον κωδικό {$document->id} στη σελίδα", [ 'fontsize' => 16 ])
-            ->annotate(5, 76, URL::to("/"),
+            ->annotate(5, 30, "Για την επιβεβαίωση της γνησιότητας του εγγράφου", [ 'fontsize' => 16 ])
+            ->annotate(5, 52, "μπορείτε να σαρώσετε τον κωδικό στα αριστερά ή να κάνετε κλικ επάνω του", [ 'fontsize' => 16 ])
+            ->annotate(5, 76, "ή να εισάγετε τον κωδικό {$document->id} στη σελίδα", [ 'fontsize' => 16 ])
+            ->annotate(5, 100, URL::to("/"),
             [ 'fontsize' => 16, 'fontFamily' => 'Courier' ])
-            ->annotate(5, 100, "για να επιβεβαιώσετε τη γνησιότητα του εγγράφου", [ 'fontsize' => 16 ])
             ->resource();
 
         // Ετοίμασε το QRCode
