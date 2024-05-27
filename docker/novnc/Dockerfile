@@ -1,18 +1,17 @@
-FROM alpine:3.18
+FROM alpine:3.20
 
 ARG WWWGROUP
 ARG WWWUSER
 
 # Setup demo environment variables
 ENV LANG=en_US.UTF-8 \
-	LANGUAGE=en_US.UTF-8 \
-	LC_ALL=en_US.UTF-8 \
-	DISPLAY=:0.0
+    LANGUAGE=en_US.UTF-8 \
+    LC_ALL=en_US.UTF-8 \
+    DISPLAY=:0.0
 
-RUN echo "@testing https://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories
 RUN apk update && \
     apk add \
-    novnc@testing \
+    novnc \
     bash \
     fluxbox \
     terminus-font \
@@ -20,7 +19,7 @@ RUN apk update && \
     tigervnc \
     py3-pip
 
-RUN pip3 install websockify
+RUN pip3 install --break-system-packages websockify
 
 RUN ln -s /usr/share/novnc/vnc.html /usr/share/novnc/index.html
 
