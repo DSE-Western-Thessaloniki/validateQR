@@ -26,6 +26,8 @@ class AddQRToDocuments implements ShouldQueue, ShouldBeUnique
 
     public $backoff = 2;
 
+    public $timeout = 300;
+
     public $tries = 3;
 
     /**
@@ -109,8 +111,6 @@ class AddQRToDocuments implements ShouldQueue, ShouldBeUnique
 
             $this->documentGroup->job_status_text = sprintf("%.2f", $index / $documents->count() * 100) . "%";
             $this->documentGroup->save();
-
-            usleep(500000);
         }
 
         $this->documentGroup->job_status_text = 'Ολοκληρώθηκε η δημιουργία QR';
