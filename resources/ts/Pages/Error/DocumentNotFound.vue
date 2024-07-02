@@ -2,6 +2,7 @@
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { Head, Link } from "@inertiajs/vue3";
+import route from "ziggy-js";
 </script>
 <template>
     <Head title="Το έγγραφο δε βρέθηκε" />
@@ -12,8 +13,7 @@ import { Head, Link } from "@inertiajs/vue3";
             Το έγγραφο που αναζητήσατε δε βρέθηκε!
         </div>
         <Link
-            href="/"
-            as="button"
+            :href="route('home')"
             class="rounded-md bg-blue-400 hover:bg-blue-500 transition-colors duration-500 border border-black p-2 block mt-5"
         >
             <FontAwesomeIcon :icon="faArrowLeft" />
