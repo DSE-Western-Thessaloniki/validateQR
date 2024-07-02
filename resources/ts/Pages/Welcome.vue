@@ -1,5 +1,6 @@
-<script setup>
-import { Head, Link, useForm } from "@inertiajs/vue3";
+<script setup lang="ts">
+import { Head, Link, router, useForm } from "@inertiajs/vue3";
+import { ref } from "vue";
 import route from "ziggy-js";
 
 defineProps({
@@ -9,15 +10,7 @@ defineProps({
     phpVersion: String,
 });
 
-const form = useForm({
-    document: "",
-});
-
-const submit = () => {
-    form.get(route("document.show", { document: form.document }), {
-        onFinish: () => form.reset("code"),
-    });
-};
+const form_document = ref("");
 </script>
 
 <template>
@@ -69,25 +62,21 @@ const submit = () => {
                     Λήψη επικυρωμένων αντιγράφων εγγράφων με χρήση QRCode
                 </div>
             </div>
-            <form
-                @submit.prevent="submit"
-                class="flex justify-center mt-16 sm:justify-between"
-            >
+            <div class="flex justify-center mt-16 sm:justify-between">
                 <input
                     type="text"
                     name="code"
                     class="block w-full rounded-l-md"
-                    v-model="form.document"
+                    v-model="form_document"
                     placeholder="Εισάγετε εδώ τον κωδικό του εγγράφου"
                 />
-                <button
-                    type="submit"
+                <a
                     class="inline-flex items-center px-4 py-2 bg-red-800 rounded-r-md font-semibold text-xs text-white tracking-widest hover:bg-red-600 disabled:opacity-25 disabled:bg-gray-500 transition"
-                    :disabled="form.processing"
+                    :href="route('document.show', { document: form_document })"
                 >
                     Αναζήτηση
-                </button>
-            </form>
+                </a>
+            </div>
         </div>
     </div>
 </template>
