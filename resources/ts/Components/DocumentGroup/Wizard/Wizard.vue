@@ -16,6 +16,7 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { useWizardStore } from "@/Stores/wizard";
 import axios from "axios";
 import { intervalCollection } from "time-events-manager";
+import route from "ziggy-js";
 
 library.add(faChevronLeft, faChevronRight);
 
@@ -90,7 +91,7 @@ const nextStep = () => {
 const refreshDocumentGroup = () => {
     if (currentStep.value > 1) {
         axios
-            .get("/documentGroup/" + wizard.documentGroup!.id)
+            .get(route("documentGroup.show", wizard.documentGroup!.id))
             .then((response) => {
                 wizard.documentGroup = response.data;
             });
