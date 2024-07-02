@@ -1,7 +1,11 @@
 <script setup lang="ts">
+import ToggleSwitch from "@/Components/ToggleSwitch.vue";
 import { useWizardStore } from "@/Stores/wizard";
+import { Link } from "@inertiajs/vue3";
 
 const wizard = useWizardStore();
+
+const onChangePublishedState = () => {};
 
 const save = () => {
     return new Promise(async (resolve, reject) => {
@@ -49,7 +53,18 @@ const save = () => {
 defineExpose({ save });
 </script>
 <template>
-    <div class="flex flex-row bg-white p-4 m-4 rounded items-center">
-        <div>Δημοσίευση ομάδας αρχείων</div>
+    <div class="flex flex-col bg-white p-4 m-4 rounded items-center">
+        <div class="font-bold pb-4 text-xl">
+            Βήμα 5ο: Δημοσίευση ομάδας αρχείων
+        </div>
+
+        <div class="flex flex-col items-center border-black border p-4 w-6/12">
+            <ToggleSwitch
+                class="w-6/12"
+                :active="wizard.documentGroup?.published"
+            >
+                <div>Ενεργοποίηση δημοσίευσης</div>
+            </ToggleSwitch>
+        </div>
     </div>
 </template>
