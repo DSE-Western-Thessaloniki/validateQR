@@ -9,6 +9,7 @@ use App\Models\Document;
 use App\Models\DocumentGroup;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Gate;
 
 class DocumentController extends Controller
 {
@@ -18,7 +19,7 @@ class DocumentController extends Controller
      */
     public function __construct()
     {
-        $this->authorizeResource(Document::class, 'document');
+        // $this->authorizeResource(Document::class, 'document');
     }
 
     /**
@@ -42,6 +43,8 @@ class DocumentController extends Controller
      */
     public function store(StoreDocumentRequest $request)
     {
+        Gate::authorize("create", Document::class);
+
         $document = Document::create($request->validated());
 
         return response()->json($document);
@@ -49,6 +52,8 @@ class DocumentController extends Controller
 
     public function storeMany(StoreManyDocumentsRequest $request)
     {
+        Gate::authorize("create", Document::class);
+
         $validated = $request->validated();
 
         $documents = [];
@@ -81,6 +86,8 @@ class DocumentController extends Controller
 
     public function storeManySigned(StoreManyDocumentsRequest $request)
     {
+        Gate::authorize("create", Document::class);
+
         $validated = $request->validated();
 
         $documents = [];
