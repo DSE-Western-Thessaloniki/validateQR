@@ -148,4 +148,12 @@ class DocumentGroupController extends Controller
             storage_path('app') . "/" . $documentGroup->id . "/qr/" . $documentGroup->id . ".zip"
         );
     }
+
+    public function togglePublished(DocumentGroup $documentGroup)
+    {
+        $documentGroup->published =! $documentGroup->published;
+        $documentGroup->save();
+
+        return response()->json($documentGroup);
+    }
 }
