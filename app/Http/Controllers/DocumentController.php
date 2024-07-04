@@ -141,8 +141,11 @@ class DocumentController extends Controller
      */
     public function show(Document $document)
     {
-        // Έλεγξε μήπως δεν έχει πάρει ψηφιακή υπογραφή
-        if (!file_exists(storage_path("app"). "/{$document->document_group_id}/signed/{$document->id}.pdf")) {
+        // Έλεγξε μήπως δεν έχει πάρει ψηφιακή υπογραφή ή το group δεν είναι δημοσιευμένο
+        if (
+            !file_exists(storage_path("app"). "/{$document->document_group_id}/signed/{$document->id}.pdf") ||
+            !$document->document_group->published
+            ) {
             return inertia('Error/DocumentNotFound');
         }
 
