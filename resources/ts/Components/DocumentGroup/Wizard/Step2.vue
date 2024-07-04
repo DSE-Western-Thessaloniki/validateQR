@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useWizardStore } from "@/Stores/wizard";
 import FileDropZone from "@/Components/FileDropZone.vue";
-import route from "ziggy-js";
 import { getDocuments } from "./utilities";
 
 const wizard = useWizardStore();

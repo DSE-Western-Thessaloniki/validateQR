@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import route from "ziggy-js";
-
 import { useWizardStore } from "@/Stores/wizard";
 import { ref, watch } from "vue";
 import axios from "axios";

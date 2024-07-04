@@ -55,7 +55,7 @@ export default defineConfig(({ mode }) => {
                 "@": path.resolve(__dirname, "resources/ts/"),
                 "ziggy-js": path.resolve(
                     __dirname,
-                    "vendor/tightenco/ziggy/dist/index.es"
+                    "vendor/tightenco/ziggy/src/js"
                 ),
             },
         },

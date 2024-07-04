@@ -3,7 +3,6 @@ import { useWizardStore } from "@/Stores/wizard";
 import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import axios from "axios";
-import route from "ziggy-js";
 import { getDocuments } from "./utilities";
 import { watch } from "vue";
 
