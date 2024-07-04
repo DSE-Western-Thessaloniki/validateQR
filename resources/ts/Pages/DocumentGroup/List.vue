@@ -5,7 +5,7 @@ import Pagination from "@/Components/Pagination.vue";
 import type { Pagination as PaginationProps } from "@/pagination.d.ts";
 import { router, Link } from "@inertiajs/vue3";
 import { ref, watch } from "vue";
-import route from "ziggy-js";
+import { route } from "ziggy-js";
 import debounce from "lodash/debounce";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";

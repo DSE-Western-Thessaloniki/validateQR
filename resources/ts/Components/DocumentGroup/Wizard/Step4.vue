@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useWizardStore } from "@/Stores/wizard";
 import FileDropZone from "@/Components/FileDropZone.vue";
-import route from "ziggy-js";
+import { route } from "ziggy-js";
 import { faKey, faUnlockKeyhole } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { getDocuments } from "./utilities";

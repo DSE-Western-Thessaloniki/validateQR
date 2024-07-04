@@ -16,7 +16,7 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { useWizardStore } from "@/Stores/wizard";
 import axios from "axios";
 import { intervalCollection } from "time-events-manager";
-import route from "ziggy-js";
+import { route } from "ziggy-js";
 
 library.add(faChevronLeft, faChevronRight);
 

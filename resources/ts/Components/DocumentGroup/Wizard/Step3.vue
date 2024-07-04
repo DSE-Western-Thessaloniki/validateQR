@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import axios from "axios";
 import { getDocuments } from "./utilities";
 import { watch } from "vue";
+import { route } from "ziggy-js";
 
 const wizard = useWizardStore();
 

@@ -2,6 +2,7 @@
 import { useWizardStore } from "@/Stores/wizard";
 import FileDropZone from "@/Components/FileDropZone.vue";
 import { getDocuments } from "./utilities";
+import { route } from "ziggy-js";
 
 const wizard = useWizardStore();
 
