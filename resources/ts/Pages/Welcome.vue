@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head, Link, router, useForm } from "@inertiajs/vue3";
 import { ref } from "vue";
-import route from "ziggy-js";
+import { route } from "ziggy-js";
 
 defineProps({
     canLogin: Boolean,

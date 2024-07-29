@@ -16,7 +16,7 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { Link, router, usePage } from "@inertiajs/vue3";
 import axios from "axios";
 import { TransitionGroup, useAttrs } from "vue";
-import route from "ziggy-js";
+import { route } from "ziggy-js";
 
 const props = defineProps<{
     users: App.Models.User[];

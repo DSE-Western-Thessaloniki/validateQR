@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useForm, type InertiaForm, Link } from "@inertiajs/vue3";
-import route from "ziggy-js";
+import { route } from "ziggy-js";
 
 const props = defineProps<{
     settings: App.Models.Settings;
