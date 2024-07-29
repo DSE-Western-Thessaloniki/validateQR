@@ -10,6 +10,7 @@ use App\Models\DocumentGroup;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
 
 class DocumentController extends Controller
 {
@@ -112,7 +113,6 @@ class DocumentController extends Controller
                     continue;
                 }
 
-                logger($document);
                 $file->storeAs($validated['document_group_id'] . '/signed/', "{$document->id}.pdf");
 
                 $document->state = Document::WithQRAndSignature;
@@ -146,7 +146,7 @@ class DocumentController extends Controller
             !file_exists(storage_path("app"). "/{$document->document_group_id}/signed/{$document->id}.pdf") ||
             !$document->documentGroup->published
             ) {
-            logger("Document with id '{$document->id}' not found or group not published. [{$_SERVER['HTTP_X_FORWARDED_FOR']} -> {$_SERVER['REMOTE_ADDR']}]");
+            Log::info("Document with id '{$document->id}' not found or group not published. [{$_SERVER['HTTP_X_FORWARDED_FOR']} -> {$_SERVER['REMOTE_ADDR']}]");
             return inertia('Error/DocumentNotFound');
         }
 
