@@ -144,7 +144,7 @@ class DocumentController extends Controller
         // Έλεγξε μήπως δεν έχει πάρει ψηφιακή υπογραφή ή το group δεν είναι δημοσιευμένο
         if (
             !file_exists(storage_path("app"). "/{$document->document_group_id}/signed/{$document->id}.pdf") ||
-            !$document->document_group->published
+            !$document->documentGroup->published
             ) {
             logger("Document with id '{$document->id}' not found or group not published. [{$_SERVER['HTTP_X_FORWARDED_FOR']} -> {$_SERVER['REMOTE_ADDR']}]");
             return inertia('Error/DocumentNotFound');
