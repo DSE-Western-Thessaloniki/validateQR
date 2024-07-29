@@ -33,7 +33,7 @@ Route::middleware(['throttle:document'])
     ->resource('document', DocumentController::class)
     ->only(['show'])
     ->missing(function (Request $request) {
-        $document_id = preg_replace(".*/document/", "", $request->getRequestUri());
+        $document_id = preg_replace("/.*\/document\/(.*)/", "$1", $request->getRequestUri());
         $ip_address = isset($_SERVER['HTTP_X_FORWARDED_FOR']) ?
             "{$_SERVER['HTTP_X_FORWARDED_FOR']} -> {$_SERVER['REMOTE_ADDR']}" :
             "{$_SERVER['REMOTE_ADDR']}";
