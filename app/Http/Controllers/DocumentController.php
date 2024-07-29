@@ -146,9 +146,12 @@ class DocumentController extends Controller
             !file_exists(storage_path("app"). "/{$document->document_group_id}/signed/{$document->id}.pdf") ||
             !$document->documentGroup->published
             ) {
-            Log::info("Document with id '{document_id}' not found or group not published. [{ip_address}]", [
+            $ip_address = isset($_SERVER['HTTP_X_FORWARDED_FOR']) ?
+                "{$_SERVER['HTTP_X_FORWARDED_FOR']} -> {$_SERVER['REMOTE_ADDR']}" :
+                "{$_SERVER['REMOTE_ADDR']}";
+            Log::warning("Το έγγραφο με id '{document_id}' δεν έχει αποθηκευμένο αρχείο ή η ομάδα δεν είναι δημοσιευμένη. [{ip_address}]", [
                 'document_id' => $document->id,
-                'ip_address' => "{$_SERVER['HTTP_X_FORWARDED_FOR']} -> {$_SERVER['REMOTE_ADDR']}"
+                'ip_address' => $ip_address
             ]);
             return inertia('Error/DocumentNotFound');
         }

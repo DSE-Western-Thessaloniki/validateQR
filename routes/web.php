@@ -5,6 +5,7 @@ use App\Http\Controllers\DocumentGroupController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -32,6 +33,14 @@ Route::middleware(['throttle:document'])
     ->resource('document', DocumentController::class)
     ->only(['show'])
     ->missing(function (Request $request) {
+        $document_id = str_replace("/document/", "", $request->getRequestUri());
+        $ip_address = isset($_SERVER['HTTP_X_FORWARDED_FOR']) ?
+            "{$_SERVER['HTTP_X_FORWARDED_FOR']} -> {$_SERVER['REMOTE_ADDR']}" :
+            "{$_SERVER['REMOTE_ADDR']}";
+        Log::info("Το έγγραφο με id '{document_id}' δεν βρέθηκε. [{ip_address}]", [
+            'document_id' => $document_id,
+            'ip_address' => $ip_address
+        ]);
         return Inertia::render('Error/DocumentNotFound');
     });
 
