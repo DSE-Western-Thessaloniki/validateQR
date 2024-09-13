@@ -6,7 +6,6 @@ use App\Models\Document;
 use App\Models\DocumentGroup;
 use App\Models\Settings;
 use App\Services\ImageService;
-use chillerlan\QRCode\Output\QROutputInterface;
 use chillerlan\QRCode\QRCode;
 use chillerlan\QRCode\QROptions;
 use Illuminate\Bus\Queueable;
@@ -48,10 +47,10 @@ class AddQRToDocuments implements ShouldQueue, ShouldBeUnique
         $documents = $this->documentGroup->documents()->get();
 
         $this->documentGroup->job_status = DocumentGroup::JobInProgress;
-        $this->documentGroup->job_status_text = "";
+        $this->documentGroup->job_status_text = '';
         $this->documentGroup->save();
 
-        foreach ($documents as $index=>$document) {
+        foreach ($documents as $index => $document) {
             $filename = storage_path('app')."/{$this->documentGroup->id}/{$document->id}.pdf";
             $output_filename = storage_path('app')."/{$this->documentGroup->id}/qr/{$document->id}.pdf";
             logger("Adding QR to {$filename}");
@@ -59,29 +58,29 @@ class AddQRToDocuments implements ShouldQueue, ShouldBeUnique
             $document_link = URL::to("/validateQR/document/{$document->id}");
 
             // Δημιούργησε τον φάκελο qr μέσα στον φάκελο της ομάδας γιατί τον χρειαζόμαστε
-            if (!file_exists(storage_path('app') . "/{$this->documentGroup->id}/qr")) {
-                logger("Create qr folder");
-                mkdir(storage_path('app') . "/{$this->documentGroup->id}/qr");
+            if (! file_exists(storage_path('app')."/{$this->documentGroup->id}/qr")) {
+                logger('Create qr folder');
+                mkdir(storage_path('app')."/{$this->documentGroup->id}/qr");
             }
 
             $this->createImage($document, $document_link);
 
             $command = [
-                "/usr/bin/qpdfImageEmbed",
-                "-i",
+                '/usr/bin/qpdfImageEmbed',
+                '-i',
                 $filename,
-                "-o",
+                '-o',
                 $output_filename,
-                "--img-x",
+                '--img-x',
                 $settings->img_x,
-                "--img-y",
+                '--img-y',
                 $settings->img_y,
-                "--img-scale",
+                '--img-scale',
                 $settings->img_scale,
-                "--img-link-to",
+                '--img-link-to',
                 $document_link,
-                "-s",
-                storage_path('app') . "/{$this->documentGroup->id}/qr/{$document->id}.png",
+                '-s',
+                storage_path('app')."/{$this->documentGroup->id}/qr/{$document->id}.png",
             ];
 
             logger($command);
@@ -101,15 +100,16 @@ class AddQRToDocuments implements ShouldQueue, ShouldBeUnique
 
                 logger($message);
                 $this->fail($message);
+
                 return;
             }
 
-            unlink(storage_path('app') . "/{$this->documentGroup->id}/qr/{$document->id}.png");
+            unlink(storage_path('app')."/{$this->documentGroup->id}/qr/{$document->id}.png");
 
             $document->state = Document::WithQR;
             $document->save();
 
-            $this->documentGroup->job_status_text = sprintf("%.2f", $index / $documents->count() * 100) . "%";
+            $this->documentGroup->job_status_text = sprintf('%.2f', $index / $documents->count() * 100).'%';
             $this->documentGroup->save();
         }
 
@@ -132,11 +132,11 @@ class AddQRToDocuments implements ShouldQueue, ShouldBeUnique
         // Ετοίμασε το κείμενο που θα εισαχθεί στο PDF
         $service = new ImageService();
         $imageText = $service->create(600, 120)
-            ->annotate(5, 30, "Για την επιβεβαίωση της γνησιότητας του εγγράφου", [ 'fontsize' => 16 ])
-            ->annotate(5, 52, "μπορείτε να σαρώσετε τον κωδικό στα αριστερά ή να κάνετε κλικ επάνω του", [ 'fontsize' => 16 ])
-            ->annotate(5, 76, "ή να εισάγετε τον κωδικό {$document->id} στη σελίδα", [ 'fontsize' => 16 ])
-            ->annotate(5, 100, URL::to("/"),
-            [ 'fontsize' => 16, 'fontFamily' => 'Courier' ])
+            ->annotate(5, 30, 'Για την επιβεβαίωση της γνησιότητας του εγγράφου', ['fontsize' => 16])
+            ->annotate(5, 52, 'μπορείτε να σαρώσετε τον κωδικό στα αριστερά ή να κάνετε κλικ επάνω του', ['fontsize' => 16])
+            ->annotate(5, 76, "ή να εισάγετε τον κωδικό {$document->id} στη σελίδα", ['fontsize' => 16])
+            ->annotate(5, 100, URL::to('/validateQR'),
+                ['fontsize' => 16, 'fontFamily' => 'Courier'])
             ->resource();
 
         // Ετοίμασε το QRCode
@@ -155,7 +155,7 @@ class AddQRToDocuments implements ShouldQueue, ShouldBeUnique
         $imageQR->addImage($imageText);
         $imageQR->resetIterator();
         $combined = $imageQR->appendImages(false);
-        $combined->transparentPaintImage("white", 0, 0, false);
-        $combined->writeImage(storage_path('app') . "/{$this->documentGroup->id}/qr/{$document->id}.png");
+        $combined->transparentPaintImage('white', 0, 0, false);
+        $combined->writeImage(storage_path('app')."/{$this->documentGroup->id}/qr/{$document->id}.png");
     }
 }
