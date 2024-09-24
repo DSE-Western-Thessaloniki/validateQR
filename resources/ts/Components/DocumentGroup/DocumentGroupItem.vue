@@ -7,8 +7,10 @@ import {
     faCircleXmark,
 } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { Link } from "@inertiajs/vue3";
+import { Link, router } from "@inertiajs/vue3";
 import { route } from "ziggy-js";
+import axios from "axios";
+import { computed, ref } from "vue";
 
 library.add(faPencil, faTrash, faCircleCheck, faCircleXmark);
 
@@ -23,11 +25,27 @@ function format_date(dateString: string) {
     return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
 }
 
-const published = props.group.published;
+const published = computed(() => props.group.published);
 
-const publishedBackground = published ? "bg-green-300" : "bg-orange-300";
-const publishedBorder = published ? "border-green-500" : "border-orange-500";
-const publishedText = published ? "text-green-700" : "text-orange-700";
+const publishedBackground = computed(() =>
+    published.value ? "bg-green-300" : "bg-orange-300"
+);
+const publishedBorder = computed(() =>
+    published.value ? "border-green-500" : "border-orange-500"
+);
+const publishedText = computed(() =>
+    published.value ? "text-green-700" : "text-orange-700"
+);
+
+const toggleGroup = () => {
+    axios
+        .post(route("documentGroup.togglePublished", props.group.id))
+        .then((res) => {
+            if (res.status == 200) {
+                router.reload();
+            }
+        });
+};
 </script>
 
 <template>
@@ -63,17 +81,25 @@ const publishedText = published ? "text-green-700" : "text-orange-700";
                 >
                     <FontAwesomeIcon :icon="faTrash" size="1x" />
                 </div>
-                <div
-                    class="transition ease-in-out duration-300 px-3 py-2 mx-2 rounded-md hover:shadow-xl hover:-translate-y-0.5"
-                    :class="
-                        published ? 'hover:bg-orange-300' : 'hover:bg-green-300'
-                    "
+                <button
+                    :href="route('documentGroup.togglePublished', group.id)"
+                    method="post"
+                    class="transition ease-in-out duration-300 px-3 py-2 mx-2 rounded-md"
+                    :class="{
+                        'hover:bg-orange-300 hover:shadow-xl hover:-translate-y-0.5':
+                            step == 5 && published,
+                        'hover:bg-green-300 hover:shadow-xl hover:-translate-y-0.5':
+                            step == 5 && !published,
+                        'disabled:text-gray-300': step < 5,
+                    }"
+                    :disabled="step < 5"
+                    @click="toggleGroup"
                 >
                     <FontAwesomeIcon
                         :icon="published ? faCircleXmark : faCircleCheck"
                         size="1x"
                     />
-                </div>
+                </button>
             </div>
             <div
                 class="flex flex-row px-6 mt-2 py-1 bg-gray-100 border-t-2"
