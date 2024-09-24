@@ -121,7 +121,10 @@ class DocumentGroupController extends Controller
      */
     public function destroy(DocumentGroup $documentGroup)
     {
-        //
+        $documentGroup->delete();
+
+        return to_route('documentGroup.index')
+            ->with('danger', 'Η ομάδα εγγράφων διαγράφηκε!');
     }
 
     public function addQR(DocumentGroup $documentGroup)
@@ -155,5 +158,12 @@ class DocumentGroupController extends Controller
         $documentGroup->save();
 
         return response()->json($documentGroup);
+    }
+
+    public function confirmDelete(DocumentGroup $documentGroup)
+    {
+        return Inertia::render('DocumentGroup/ConfirmDelete', [
+            'group' => $documentGroup,
+        ]);
     }
 }

@@ -3,15 +3,20 @@ import AppLayout from "@/Layouts/AppLayout.vue";
 import DocumentGroupItem from "@/Components/DocumentGroup/DocumentGroupItem.vue";
 import Pagination from "@/Components/Pagination.vue";
 import type { Pagination as PaginationProps } from "@/pagination.d.ts";
-import { router, Link } from "@inertiajs/vue3";
+import { router, Link, usePage } from "@inertiajs/vue3";
 import { ref, watch } from "vue";
 import { route } from "ziggy-js";
 import debounce from "lodash/debounce";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import type { PageWithFlashProps } from "@/flash-message";
+import type { PageWithAuthProps } from "@/page-props-auth";
+import Message from "@/Components/Message.vue";
 
 library.add(faPlus);
+
+const page = usePage<PageWithFlashProps & PageWithAuthProps>();
 
 const props = defineProps<{
     groups: PaginationProps<
@@ -59,6 +64,18 @@ watch(
 
         <div class="py-6">
             <div class="p-3 max-w-7xl mx-auto sm:px-6 lg:px-8 my-3">
+                <Message
+                    class="mb-5"
+                    type="success"
+                    v-if="page.props.flash.success"
+                    >{{ page.props.flash.success }}</Message
+                >
+                <Message
+                    class="mb-5"
+                    type="danger"
+                    v-if="page.props.flash.danger"
+                    >{{ page.props.flash.danger }}</Message
+                >
                 <Link
                     :href="route('documentGroup.create')"
                     class="p-3 bg-blue-500 rounded"

@@ -76,11 +76,15 @@ const toggleGroup = () => {
                 >
                     <FontAwesomeIcon :icon="faPencil" size="1x" />
                 </Link>
-                <div
+                <Link
+                    :href="route('documentGroup.confirmDelete', group.id)"
+                    method="post"
+                    as="button"
                     class="transition ease-in-out duration-300 px-3 py-2 mx-2 rounded-md hover:shadow-xl hover:bg-red-500 hover:-translate-y-0.5"
+                    v-if="step < 5"
                 >
                     <FontAwesomeIcon :icon="faTrash" size="1x" />
-                </div>
+                </Link>
                 <button
                     :href="route('documentGroup.togglePublished', group.id)"
                     method="post"
