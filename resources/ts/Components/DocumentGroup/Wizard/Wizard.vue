@@ -100,8 +100,7 @@ const refreshDocumentGroup = () => {
 
 // Αφαίρεσε τυχόν υπολειπόμενα setInterval (Χρήσιμο ειδικά στο development)
 intervalCollection.removeAll();
-
-const intervalID = setInterval(refreshDocumentGroup, 2000);
+intervalCollection.add(refreshDocumentGroup, 2000);
 
 let lastRunResult: number | undefined;
 let lastRunResultText: string | undefined;
@@ -144,7 +143,7 @@ wizard.$subscribe((mutation, state) => {
 });
 
 onBeforeUnmount(() => {
-    clearInterval(intervalID);
+    intervalCollection.removeAll();
 });
 </script>
 
