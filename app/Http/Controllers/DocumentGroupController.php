@@ -148,7 +148,8 @@ class DocumentGroupController extends Controller
     public function getQR(DocumentGroup $documentGroup)
     {
         return response()->download(
-            storage_path('app') . "/" . $documentGroup->id . "/qr/" . $documentGroup->id . ".zip"
+            storage_path('app') . "/" . $documentGroup->id . "/qr/" . $documentGroup->id . ".zip",
+            "qr_{$documentGroup->id}_".time().".zip"
         );
     }
 
