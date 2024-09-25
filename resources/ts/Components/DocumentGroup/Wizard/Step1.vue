@@ -3,6 +3,7 @@ import { useWizardStore } from "@/Stores/wizard";
 import { ref, watch } from "vue";
 import axios from "axios";
 import { isLaravelValidationError } from "@/laravel-validation-error";
+import { router } from "@inertiajs/vue3";
 
 const wizard = useWizardStore();
 
@@ -64,11 +65,16 @@ const save = () => {
                     wizard.documentGroup = response.data;
 
                     // Εφόσον όλα πήγαν καλά άνοιξε το group για επεξεργασία
-                    window.location.href = route("documentGroup.edit", {
-                        documentGroup: wizard.documentGroup!.id,
-                    });
+                    router.get(
+                        route("documentGroup.edit", {
+                            documentGroup: wizard.documentGroup!.id,
+                        }),
+                        {},
+                        {
+                            preserveState: true,
+                        }
+                    );
                 }
-                resolve("OK");
             })
             .catch((error: unknown) => {
                 let errors: Array<String> = [];
