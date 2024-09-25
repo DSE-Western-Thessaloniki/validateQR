@@ -61,6 +61,7 @@ Route::middleware([
     Route::get('/documentGroup/{documentGroup}/withQR', [DocumentGroupController::class, 'getQR'])->name('documentGroup.getQR');
     Route::post('/documentGroup/{documentGroup}/togglePublished', [DocumentGroupController::class,'togglePublished'])->name('documentGroup.togglePublished');
     Route::post('/documentGroup/{documentGroup}/confirmDelete', [DocumentGroupController::class,'confirmDelete'])->name('documentGroup.confirmDelete');
+    Route::post('/documentGroup/{documentGroup}/cancelDocuments', [DocumentGroupController::class,'cancelDocuments'])->name('documentGroup.cancelDocuments');
     Route::resource('documentGroup', DocumentGroupController::class);
 
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');

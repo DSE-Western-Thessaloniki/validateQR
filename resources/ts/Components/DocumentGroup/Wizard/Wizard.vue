@@ -89,7 +89,7 @@ const nextStep = () => {
 };
 
 const refreshDocumentGroup = () => {
-    if (currentStep.value > 1) {
+    if (currentStep.value > 1 && currentStep.value < 5) {
         axios
             .get(route("documentGroup.show", wizard.documentGroup!.id))
             .then((response) => {

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Document extends Model
 {
@@ -24,8 +25,17 @@ class Document extends Model
 
     const WithQRAndSignature = 2;
 
+    const ExtraStateCancelled = 1;
+
+    const ExtraStateReplaced = 2;
+
     public function documentGroup(): BelongsTo
     {
         return $this->belongsTo(DocumentGroup::class);
+    }
+
+    public function extraState(): HasOne
+    {
+        return $this->hasOne(DocumentExtraState::class);
     }
 }

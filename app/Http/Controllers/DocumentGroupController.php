@@ -7,7 +7,9 @@ use App\Http\Requests\UpdateDocumentGroupRequest;
 use App\Jobs\AddQRToDocuments;
 use App\Jobs\ZipDocumentGroup;
 use App\Models\Document;
+use App\Models\DocumentExtraState;
 use App\Models\DocumentGroup;
+use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Request;
 use Inertia\Inertia;
@@ -82,7 +84,7 @@ class DocumentGroupController extends Controller
      */
     public function show(DocumentGroup $documentGroup)
     {
-        $documentGroup->load('documents');
+        $documentGroup->load(['documents', 'documents.extraState']);
 
         return response()->json($documentGroup);
     }
@@ -92,7 +94,7 @@ class DocumentGroupController extends Controller
      */
     public function edit(DocumentGroup $documentGroup)
     {
-        $documentGroup->load('documents');
+        $documentGroup->load(['documents', 'documents.extraState']);
 
         return Inertia::render('DocumentGroup/Edit', [
             'group' => $documentGroup,
@@ -165,6 +167,34 @@ class DocumentGroupController extends Controller
     {
         return Inertia::render('DocumentGroup/ConfirmDelete', [
             'group' => $documentGroup,
+        ]);
+    }
+
+    public function cancelDocuments(DocumentGroup $documentGroup, HttpRequest $request)
+    {
+        $validated = $request->validate([
+            'cancelText' => ['string', 'nullable']
+        ]);
+        $cancelText = $validated['cancelText'] ?? "";
+
+        $documents = $documentGroup->documents()->with('extraState');
+
+        $documents->each(function ($document) use ($cancelText) {
+            if ($document->extraState) {
+                $document->extraState->extra_state = Document::ExtraStateCancelled;
+                $document->extraState->extra_state_text = $cancelText;
+                $document->extraState->save();
+            } else {
+                $extraState = new DocumentExtraState([
+                    'extra_state' => Document::ExtraStateCancelled,
+                    'extra_state_text' => $cancelText,
+                ]);
+                $document->extraState()->save($extraState);
+            }
+        });
+
+        return response()->json([
+            "result" => "OK",
         ]);
     }
 }
