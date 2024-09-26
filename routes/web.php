@@ -55,7 +55,7 @@ Route::middleware([
 
     Route::post('/document/storeMany', [DocumentController::class, 'storeMany'])->name('document.storeMany');
     Route::post('/document/storeManySigned', [DocumentController::class, 'storeManySigned'])->name('document.storeManySigned');
-    Route::resource('document', DocumentController::class)->only(['store']);
+    Route::resource('document', DocumentController::class)->only(['index', 'show', 'store']);
 
     Route::post('/documentGroup/{documentGroup}/addQR', [DocumentGroupController::class, 'addQR'])->name('documentGroup.addQR');
     Route::get('/documentGroup/{documentGroup}/withQR', [DocumentGroupController::class, 'getQR'])->name('documentGroup.getQR');

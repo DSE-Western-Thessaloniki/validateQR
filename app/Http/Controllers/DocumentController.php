@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Request;
+use Inertia\Inertia;
 
 class DocumentController extends Controller
 {
@@ -28,7 +30,25 @@ class DocumentController extends Controller
      */
     public function index()
     {
-        //
+        $filter = Request::input('filter');
+        if (! is_string($filter)) {
+            $filter = '';
+        }
+
+        $documents = Document::query()
+            ->when($filter, function ($query) use ($filter) {
+                $query->where('id', 'LIKE', "%{$filter}%")
+                    ->orWhere('filename', 'LIKE', "%{$filter}%");
+            })
+            ->with(['documentGroup', 'extraState'])
+            ->latest()
+            ->paginate(15)
+            ->appends(['filter' => $filter]);
+
+        return Inertia::render('Document/Index', [
+            'documents' => $documents,
+            'filters' => ['filter' => $filter]
+        ]);
     }
 
     /**
