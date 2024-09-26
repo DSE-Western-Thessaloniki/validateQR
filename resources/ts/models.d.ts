@@ -38,13 +38,22 @@ declare namespace App.Models {
         username: string;
         name: string;
         email: string;
-        email_verified_at: Date;
-        two_factor_confirmed_at?: Date;
+        email_verified_at: string;
+        two_factor_confirmed_at?: string;
         current_team_id?: number;
         profile_photo_path?: string;
-        created_at: Date;
-        updated_at: Date;
+        created_at: string;
+        updated_at: string;
         role: number;
         active: boolean;
+    }
+
+    export interface ExtraState {
+        id: number;
+        document_id: string;
+        extra_state: number;
+        extra_state_text: string;
+        created_at: string;
+        updated_at: string;
     }
 }
