@@ -9,14 +9,17 @@ import StepCounter from "./StepCounter.vue";
 import type { DocumentGroupFormStep } from "./DocumentGroupFormData";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import {
+    faCheck,
     faChevronLeft,
     faChevronRight,
+    faSave,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { useWizardStore } from "@/Stores/wizard";
 import axios from "axios";
 import { intervalCollection } from "time-events-manager";
 import { route } from "ziggy-js";
+import { Link } from "@inertiajs/vue3";
 
 library.add(faChevronLeft, faChevronRight);
 
@@ -258,5 +261,14 @@ onBeforeUnmount(() => {
             Επόμενο βήμα
             <FontAwesomeIcon :icon="faChevronRight" />
         </button>
+        <Link
+            as="button"
+            class="p-2 rounded-md transition ease-in-out duration-300 bg-green-500 hover:shadow-xl hover:-translate-y-0.5"
+            v-if="currentStep === 5"
+            :href="route('documentGroup.index')"
+        >
+            Τέλος
+            <FontAwesomeIcon :icon="faCheck" />
+        </Link>
     </div>
 </template>

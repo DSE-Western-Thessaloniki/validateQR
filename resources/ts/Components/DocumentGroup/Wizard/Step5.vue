@@ -118,49 +118,53 @@ defineExpose({ save });
             v-if="cancelledDocuments?.length"
         >
             Ακυρωμένα έγγραφα:
-            <table class="table-auto border border-collapse border-black">
-                <thead>
-                    <tr>
-                        <th class="border border-black">A/A</th>
-                        <th class="border border-black">Όνομα αρχείου</th>
-                        <th class="border border-black">Αιτία ακύρωσης</th>
-                        <th class="border border-black">Ενέργειες</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr
-                        v-for="(doc, index) in cancelledDocuments"
-                        :key="doc.id"
-                    >
-                        <td class="border border-black text-center">
-                            {{ index + 1 }}
-                        </td>
-                        <td class="border border-black">
-                            <div class="flex justify-between mx-2 items-center">
-                                <div>
-                                    {{ doc.filename }}
+            <div class="mt-2 h-96 overflow-y-auto bg-indigo-50">
+                <table class="table-auto border border-collapse border-black">
+                    <thead>
+                        <tr>
+                            <th class="border border-black">A/A</th>
+                            <th class="border border-black">Όνομα αρχείου</th>
+                            <th class="border border-black">Αιτία ακύρωσης</th>
+                            <th class="border border-black">Ενέργειες</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr
+                            v-for="(doc, index) in cancelledDocuments"
+                            :key="doc.id"
+                        >
+                            <td class="border border-black text-center">
+                                {{ index + 1 }}
+                            </td>
+                            <td class="border border-black">
+                                <div
+                                    class="flex justify-between mx-2 items-center"
+                                >
+                                    <div>
+                                        {{ doc.filename }}
+                                    </div>
+                                    <div class="rounded-md bg-orange-300 p-1">
+                                        {{ doc.id }}
+                                    </div>
                                 </div>
-                                <div class="rounded-md bg-orange-300 p-1">
-                                    {{ doc.id }}
+                            </td>
+                            <td class="border border-black">
+                                <div class="p-2">
+                                    {{ doc.extra_state.extra_state_text }}
                                 </div>
-                            </div>
-                        </td>
-                        <td class="border border-black">
-                            <div class="p-2">
-                                {{ doc.extra_state.extra_state_text }}
-                            </div>
-                        </td>
-                        <td class="border border-black text-center">
-                            <button
-                                type="button"
-                                class="p-1 m-1 rounded-md transition ease-in-out duration-300 bg-yellow-500 hover:bg-yellow-300 hover:shadow-xl hover:-translate-y-0.5"
-                            >
-                                Αναίρεση
-                            </button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                            </td>
+                            <td class="border border-black text-center">
+                                <button
+                                    type="button"
+                                    class="p-1 m-1 rounded-md transition ease-in-out duration-300 bg-yellow-500 hover:bg-yellow-300 hover:shadow-xl hover:-translate-y-0.5"
+                                >
+                                    Αναίρεση
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </template>
