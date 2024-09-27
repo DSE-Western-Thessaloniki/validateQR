@@ -10,6 +10,11 @@ const wizard = useWizardStore();
 const onPublishedStateToggle = () => {
     axios
         .post(route("documentGroup.togglePublished", wizard.documentGroup))
+        .then((response) => {
+            if (response.status === 200) {
+                wizard!.documentGroup!.published = response.data.published;
+            }
+        })
         .catch((error: unknown) => {
             let errors: Array<String> = [];
 
@@ -35,9 +40,22 @@ const cancelDocuments = async () => {
                 axios
                     .get(route("documentGroup.show", wizard.documentGroup!.id))
                     .then((response) => {
-                        wizard.documentGroup = response.data;
-                        wizard.documents = response.data.documents;
-                        aboutToCancel.value = false;
+                        if (response.status === 200) {
+                            wizard.documentGroup = response.data;
+                            wizard.documents = response.data.documents;
+                            aboutToCancel.value = false;
+                        }
+                    })
+                    .catch((error: unknown) => {
+                        let errors: Array<String> = [];
+
+                        if (error instanceof Error) {
+                            errors.push(error.message);
+                        } else {
+                            errors.push("Γενικό σφάλμα αποθήκευσης!");
+                        }
+
+                        console.log(errors);
                     });
             }
         })
