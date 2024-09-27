@@ -32,8 +32,13 @@ const cancelDocuments = async () => {
         })
         .then((response) => {
             if (response.data.result === "OK") {
-                aboutToCancel.value = false;
-                router.reload();
+                axios
+                    .get(route("documentGroup.show", wizard.documentGroup!.id))
+                    .then((response) => {
+                        wizard.documentGroup = response.data;
+                        wizard.documents = response.data.documents;
+                        aboutToCancel.value = false;
+                    });
             }
         })
         .catch((error: unknown) => {
@@ -54,6 +59,24 @@ const cancelledDocuments = computed(() => {
         (doc) => doc.extra_state?.extra_state === 1
     );
 });
+
+const documentRestoreState = (id: string) => {
+    axios
+        .post(route("document.restoreState", id))
+        .then((response) => {
+            if (response.data.result === "OK") {
+                axios
+                    .get(route("documentGroup.show", wizard.documentGroup!.id))
+                    .then((response) => {
+                        wizard.documentGroup = response.data;
+                        wizard.documents = response.data.documents;
+                    });
+            }
+        })
+        .catch((error: unknown) => {
+            console.log(error);
+        });
+};
 
 const save = () => {
     return new Promise(async (resolve, reject) => {
@@ -150,13 +173,14 @@ defineExpose({ save });
                             </td>
                             <td class="border border-black">
                                 <div class="p-2">
-                                    {{ doc.extra_state.extra_state_text }}
+                                    {{ doc.extra_state?.extra_state_text }}
                                 </div>
                             </td>
                             <td class="border border-black text-center">
                                 <button
                                     type="button"
                                     class="p-1 m-1 rounded-md transition ease-in-out duration-300 bg-yellow-500 hover:bg-yellow-300 hover:shadow-xl hover:-translate-y-0.5"
+                                    @click="documentRestoreState(doc.id)"
                                 >
                                     Αναίρεση
                                 </button>

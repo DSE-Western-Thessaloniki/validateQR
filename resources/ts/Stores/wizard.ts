@@ -4,7 +4,13 @@ import { defineStore } from "pinia";
 export const useWizardStore = defineStore("wizard", {
     state: (): {
         documentGroup: App.Models.DocumentGroup | undefined;
-        documents: App.Models.Document[] | undefined;
+        documents:
+            | Array<
+                  App.Models.Document & {
+                      extra_state: App.Models.ExtraState | undefined;
+                  }
+              >
+            | undefined;
         validationErrors: Record<string, Array<string>> | undefined;
         backStepAllowed: boolean;
         stepCompleted: boolean;
