@@ -55,7 +55,11 @@ Route::middleware([
 
     Route::post('/document/storeMany', [DocumentController::class, 'storeMany'])->name('document.storeMany');
     Route::post('/document/storeManySigned', [DocumentController::class, 'storeManySigned'])->name('document.storeManySigned');
-    Route::resource('document', DocumentController::class)->only(['index', 'show', 'store']);
+    Route::get('/document/{document}/showAdmin', [DocumentController::class, 'adminShow'])->name('document.adminShow');
+    Route::post('/document/{document}/cancel', [DocumentController::class, 'cancel'])->name('document.cancel');
+    Route::post('/document/{document}/replace', [DocumentController::class, 'replace'])->name('document.replace');
+    Route::post('/document/{document}/restoreState', [DocumentController::class, 'restoreState'])->name('document.restoreState');
+    Route::resource('document', DocumentController::class)->only(['index', 'store']);
 
     Route::post('/documentGroup/{documentGroup}/addQR', [DocumentGroupController::class, 'addQR'])->name('documentGroup.addQR');
     Route::get('/documentGroup/{documentGroup}/withQR', [DocumentGroupController::class, 'getQR'])->name('documentGroup.getQR');

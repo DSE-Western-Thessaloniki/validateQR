@@ -23,3 +23,23 @@ export const isAdmin = (user: App.Models.User) => {
 export const isAuthor = (user: App.Models.User) => {
     return user.role === Role.Author;
 };
+
+export const isDocumentCanceled = (
+    document: App.Models.Document & { extra_state: App.Models.ExtraState }
+) => {
+    if (document.extra_state && document.extra_state.extra_state === 1) {
+        return true;
+    }
+
+    return false;
+};
+
+export const isDocumentReplaced = (
+    document: App.Models.Document & { extra_state: App.Models.ExtraState }
+) => {
+    if (document.extra_state && document.extra_state.extra_state === 2) {
+        return true;
+    }
+
+    return false;
+};

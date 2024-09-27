@@ -6,9 +6,11 @@ use App\Http\Requests\StoreDocumentRequest;
 use App\Http\Requests\StoreManyDocumentsRequest;
 use App\Http\Requests\UpdateDocumentRequest;
 use App\Models\Document;
+use App\Models\DocumentExtraState;
 use App\Models\DocumentGroup;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
@@ -156,6 +158,14 @@ class DocumentController extends Controller
         return response()->json($documents);
     }
 
+
+    public function adminShow(Document $document)
+    {
+        $document->load(['documentGroup', 'extraState']);
+        return Inertia::render('Document/Show')
+            ->with(compact('document'));
+    }
+
     /**
      * Display the specified resource.
      */
@@ -204,5 +214,69 @@ class DocumentController extends Controller
     public function destroy(Document $document)
     {
         //
+    }
+
+    public function cancel(Document $document, HttpRequest $request)
+    {
+        $validated = $request->validate([
+            'cancelText' => ['string', 'nullable']
+        ]);
+
+        $cancelText = $validated['cancelText']?? "";
+
+        if ($document->extraState) {
+            $document->extraState->extra_state = Document::ExtraStateCancelled;
+            $document->extraState->extra_state_text = $cancelText;
+            $document->extraState->save();
+        } else {
+            $extraState = new DocumentExtraState([
+                'extra_state' => Document::ExtraStateCancelled,
+                'extra_state_text' => $cancelText,
+            ]);
+            $document->extraState()->save($extraState);
+        }
+
+        return response()->json(['result' => 'OK']);
+    }
+
+    public function restoreState(Document $document)
+    {
+        if ($document->extraState) {
+            $document->extraState->delete();
+        }
+
+        return response()->json(['result' => 'OK']);
+    }
+
+    public function replace(Document $document, HttpRequest $request)
+    {
+        $validated = $request->validate([
+            'replacement' => ['required','string']
+        ]);
+
+        $new_id = $validated['replacement'];
+
+        $new_document = Document::find($new_id);
+
+        if ($new_document) {
+            if ($document->extraState) {
+                $document->extraState->extra_state = Document::ExtraStateReplaced;
+                $document->extraState->extra_state_text = $new_id;
+                $document->extraState->save();
+            } else {
+                $extraState = new DocumentExtraState([
+                    'extra_state' => Document::ExtraStateReplaced,
+                    'extra_state_text' => $new_id,
+                ]);
+                $document->extraState()->save($extraState);
+            }
+        } else {
+            return response()->json([
+                'result' => "Not found",
+                'error' => "Δεν υπάρχει έγγραφο με id '{$new_id}'"
+            ]);
+        }
+
+        return response()->json(['result' => 'OK']);
     }
 }

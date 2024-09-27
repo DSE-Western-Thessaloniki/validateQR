@@ -3,8 +3,11 @@ import { router } from "@inertiajs/vue3";
 import type { Pagination as PaginationProps } from "@/pagination.d.ts";
 import Pagination from "@/Components/Pagination.vue";
 import { debounce } from "lodash";
-import { ref, watch } from "vue";
+import { onMounted, type Ref, ref, watch } from "vue";
 import AppLayoutNoTransition from "@/Layouts/AppLayoutNoTransition.vue";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { faCancel, faCopy, faFile } from "@fortawesome/free-solid-svg-icons";
+import { isDocumentCanceled, isDocumentReplaced } from "@/tools";
 
 const props = defineProps<{
     documents: PaginationProps<
@@ -20,6 +23,8 @@ const props = defineProps<{
 
 const filter = ref(props.filters?.filter ?? "");
 
+const input: Ref<HTMLInputElement | null> = ref(null);
+
 const findDocuments = () => {
     router.get(
         route("document.index"),
@@ -31,21 +36,22 @@ const findDocuments = () => {
             only: ["documents"],
         }
     );
+    input.value?.focus();
+};
+
+const showDocument = (id: string) => {
+    router.get(route("document.adminShow", { id }));
 };
 
 watch(
     filter,
 
-    debounce(
-        //     () => {
-        //     console.log("debounce");
-        //     console.log(window.history.state);
-        //     findDocuments();
-        // }
-        findDocuments,
-        300
-    )
+    debounce(findDocuments, 300)
 );
+
+onMounted(() => {
+    input.value?.focus();
+});
 </script>
 
 <template>
@@ -63,6 +69,7 @@ watch(
                 <input
                     class="grow hover:border-blue-500 ring-blue-500 hover:inset-ring hover:ring-1 focus:border-blue-500 placeholder:italic placeholder:text-slate-400"
                     :class="filter ? 'bg-sky-200' : ''"
+                    ref="input"
                     type="search"
                     name="filter"
                     v-model="filter"
@@ -74,6 +81,7 @@ watch(
                 <table class="w-full">
                     <thead>
                         <tr class="border-b border-gray-200">
+                            <th></th>
                             <th
                                 class="px-4 py-2 text-left text-sm font-medium text-gray-700 border-x border-black"
                             >
@@ -95,9 +103,35 @@ watch(
                         <tr
                             v-for="(document, index) in documents.data"
                             :key="document.id"
-                            class="border-b border-gray-200 hover:bg-gray-200"
-                            :class="index % 2 ? 'bg-gray-100' : 'bg-white'"
+                            class="border-b border-gray-200 hover:bg-gray-200 cursor-pointer"
+                            :class="{
+                                'bg-gray-100':
+                                    !isDocumentCanceled(document) &&
+                                    !isDocumentReplaced(document) &&
+                                    index % 2 === 0,
+                                'bg-white':
+                                    !isDocumentCanceled(document) &&
+                                    !isDocumentReplaced(document) &&
+                                    index % 2 === 1,
+                                'bg-red-100': isDocumentCanceled(document),
+                                'bg-green-100': isDocumentReplaced(document),
+                            }"
+                            @click="showDocument(document.id)"
                         >
+                            <td class="text-center">
+                                <FontAwesomeIcon
+                                    :icon="faCancel"
+                                    v-if="isDocumentCanceled(document)"
+                                ></FontAwesomeIcon>
+                                <FontAwesomeIcon
+                                    :icon="faCopy"
+                                    v-else-if="isDocumentReplaced(document)"
+                                ></FontAwesomeIcon>
+                                <FontAwesomeIcon
+                                    :icon="faFile"
+                                    v-else
+                                ></FontAwesomeIcon>
+                            </td>
                             <td
                                 class="px-4 py-2 text-sm font-medium text-gray-700 border-x border-black"
                             >
