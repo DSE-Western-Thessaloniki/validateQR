@@ -11,6 +11,14 @@ defineProps({
 });
 
 const form_document = ref("");
+
+const onKeyDown = (event: KeyboardEvent) => {
+    if (event.key === "Enter") {
+        window.location.href = route("document.show", {
+            document: form_document.value,
+        });
+    }
+};
 </script>
 
 <template>
@@ -68,6 +76,7 @@ const form_document = ref("");
                     name="code"
                     class="block w-full rounded-l-md"
                     v-model="form_document"
+                    @keydown="onKeyDown"
                     placeholder="Εισάγετε εδώ τον κωδικό του εγγράφου"
                 />
                 <a
