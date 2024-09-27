@@ -101,7 +101,7 @@ const onRestoreStateButtonClick = () => {
         </template>
 
         <div class="flex flex-col flex-grow w-1/3 mx-auto">
-            <div class="mt-4 p-4 flex flex-col bg-slate-300 rounded-md">
+            <div class="mt-4 p-4 flex flex-col bg-white rounded-md shadow-xl">
                 <div>Αναγνωριστικό: {{ document.id }}</div>
                 <div>Όνομα αρχείου: {{ document.filename }}</div>
                 <div class="mb-2">
@@ -155,10 +155,10 @@ const onRestoreStateButtonClick = () => {
                 </div>
             </div>
             <div
-                class="mt-4 flex flex-col bg-slate-300 rounded-md"
+                class="mt-4 flex flex-col bg-white rounded-md shadow-xl"
                 v-if="showCancelForm"
             >
-                <div class="py-2 px-4 rounded-t-md bg-blue-500">
+                <div class="py-2 px-4 rounded-t-md bg-blue-500 text-white">
                     <FontAwesomeIcon :icon="faCancel"></FontAwesomeIcon>
                     Ακύρωση εγγράφου
                 </div>
@@ -177,10 +177,10 @@ const onRestoreStateButtonClick = () => {
                 </div>
             </div>
             <div
-                class="mt-4 pb-4 flex flex-col bg-slate-300 rounded-md"
+                class="mt-4 pb-4 flex flex-col bg-white rounded-md shadow-xl"
                 v-if="showReplacementForm"
             >
-                <div class="py-2 px-4 rounded-t-md bg-green-500">
+                <div class="py-2 px-4 rounded-t-md bg-green-500 text-white">
                     <FontAwesomeIcon :icon="faCopy"></FontAwesomeIcon>
                     Αντικατάσταση εγγράφου
                 </div>

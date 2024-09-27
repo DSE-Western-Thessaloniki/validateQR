@@ -77,7 +77,7 @@ onMounted(() => {
                 />
             </div>
 
-            <div class="mt-4 bg-white rounded-md p-2">
+            <div class="mt-4 bg-white rounded-md p-2 shadow-xl">
                 <table class="w-full">
                     <thead>
                         <tr class="border-b border-gray-200">
