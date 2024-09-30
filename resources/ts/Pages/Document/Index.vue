@@ -28,7 +28,6 @@ const filter = ref(props.filters?.filter ?? "");
 
 const input: Ref<HTMLInputElement | null> = ref(null);
 
-console.log(props.filters?.cancelled);
 const cancelled = ref(props.filters?.cancelled ?? false);
 
 const replaced = ref(props.filters?.replaced ?? false);
