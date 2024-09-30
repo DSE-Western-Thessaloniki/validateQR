@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import ToggleSwitch from "@/Components/ToggleSwitch.vue";
 import { useWizardStore } from "@/Stores/wizard";
-import { router } from "@inertiajs/vue3";
+import { Link, router } from "@inertiajs/vue3";
 import axios from "axios";
 import { computed, ref } from "vue";
+import { route } from "ziggy-js";
 
 const wizard = useWizardStore();
 
@@ -78,6 +79,12 @@ const cancelledDocuments = computed(() => {
     );
 });
 
+const replacedDocuments = computed(() => {
+    return wizard.documents?.filter(
+        (doc) => doc.extra_state?.extra_state === 2
+    );
+});
+
 const documentRestoreState = (id: string) => {
     axios
         .post(route("document.restoreState", id))
@@ -142,7 +149,7 @@ defineExpose({ save });
                             class="p-2 rounded-md transition ease-in-out duration-300 bg-blue-300 hover:shadow-xl hover:-translate-y-0.5"
                             @click="aboutToCancel = false"
                         >
-                            Ακύρωση
+                            Κλείσιμο
                         </button>
                         <button
                             type="submit"
@@ -159,7 +166,9 @@ defineExpose({ save });
             v-if="cancelledDocuments?.length"
         >
             Ακυρωμένα έγγραφα:
-            <div class="mt-2 h-96 overflow-y-auto bg-indigo-50">
+            <div
+                class="mt-2 max-h-96 overflow-y-auto bg-indigo-50 flex mx-auto"
+            >
                 <table class="table-auto border border-collapse border-black">
                     <thead>
                         <tr>
@@ -181,7 +190,7 @@ defineExpose({ save });
                                 <div
                                     class="flex justify-between mx-2 items-center"
                                 >
-                                    <div>
+                                    <div class="pr-2">
                                         {{ doc.filename }}
                                     </div>
                                     <div class="rounded-md bg-orange-300 p-1">
@@ -192,6 +201,73 @@ defineExpose({ save });
                             <td class="border border-black">
                                 <div class="p-2">
                                     {{ doc.extra_state?.extra_state_text }}
+                                </div>
+                            </td>
+                            <td class="border border-black text-center">
+                                <button
+                                    type="button"
+                                    class="p-1 m-1 rounded-md transition ease-in-out duration-300 bg-yellow-500 hover:bg-yellow-300 hover:shadow-xl hover:-translate-y-0.5"
+                                    @click="documentRestoreState(doc.id)"
+                                >
+                                    Αναίρεση
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="flex flex-col mt-4 w-full" v-if="replacedDocuments?.length">
+            Έγγραφα που αντικαταστάθηκαν:
+            <div
+                class="mt-2 max-h-96 overflow-y-auto bg-indigo-50 flex mx-auto"
+            >
+                <table class="table-auto border border-collapse border-black">
+                    <thead>
+                        <tr>
+                            <th class="border border-black">A/A</th>
+                            <th class="border border-black">Όνομα αρχείου</th>
+                            <th class="border border-black">
+                                Έγγραφο αντικατάστασης
+                            </th>
+                            <th class="border border-black">Ενέργειες</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr
+                            v-for="(doc, index) in replacedDocuments"
+                            :key="doc.id"
+                        >
+                            <td class="border border-black text-center">
+                                {{ index + 1 }}
+                            </td>
+                            <td class="border border-black">
+                                <div
+                                    class="flex justify-between mx-2 items-center"
+                                >
+                                    <div class="pr-2">
+                                        {{ doc.filename }}
+                                    </div>
+                                    <div class="rounded-md bg-orange-300 p-1">
+                                        {{ doc.id }}
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="border border-black">
+                                <div class="p-2">
+                                    <Link
+                                        :href="
+                                            route(
+                                                'document.show',
+                                                doc.extra_state
+                                                    ?.extra_state_text
+                                            )
+                                        "
+                                        class="text-blue-500 underline"
+                                        >{{
+                                            doc.extra_state?.extra_state_text
+                                        }}</Link
+                                    >
                                 </div>
                             </td>
                             <td class="border border-black text-center">
