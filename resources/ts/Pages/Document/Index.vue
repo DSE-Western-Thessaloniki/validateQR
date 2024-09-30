@@ -8,6 +8,7 @@ import AppLayoutNoTransition from "@/Layouts/AppLayoutNoTransition.vue";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { faCancel, faCopy, faFile } from "@fortawesome/free-solid-svg-icons";
 import { isDocumentCanceled, isDocumentReplaced } from "@/tools";
+import Checkbox from "@/Components/Checkbox.vue";
 
 const props = defineProps<{
     documents: PaginationProps<
@@ -18,6 +19,8 @@ const props = defineProps<{
     >;
     filters: {
         filter?: string;
+        cancelled?: boolean;
+        replaced?: boolean;
     };
 }>();
 
@@ -25,10 +28,19 @@ const filter = ref(props.filters?.filter ?? "");
 
 const input: Ref<HTMLInputElement | null> = ref(null);
 
+console.log(props.filters?.cancelled);
+const cancelled = ref(props.filters?.cancelled ?? false);
+
+const replaced = ref(props.filters?.replaced ?? false);
+
 const findDocuments = () => {
     router.get(
         route("document.index"),
-        { filter: filter.value },
+        {
+            filter: filter.value,
+            cancelled: cancelled.value,
+            replaced: replaced.value,
+        },
         {
             preserveState: true,
             preserveScroll: true,
@@ -44,7 +56,7 @@ const showDocument = (id: string) => {
 };
 
 watch(
-    filter,
+    [filter, cancelled, replaced],
 
     debounce(findDocuments, 300)
 );
@@ -75,6 +87,32 @@ onMounted(() => {
                     v-model="filter"
                     placeholder="Όνομα αρχείου/αναγνωριστικό"
                 />
+                <Checkbox
+                    id="cancelled"
+                    v-model:checked="cancelled"
+                    class="mx-2"
+                    :disabled="replaced"
+                />
+                <label
+                    for="cancelled"
+                    :class="{
+                        'text-gray-500': replaced,
+                    }"
+                    >Ακυρωμένα</label
+                >
+                <Checkbox
+                    id="replaced"
+                    v-model:checked="replaced"
+                    class="mx-2"
+                    :disabled="cancelled"
+                />
+                <label
+                    for="replaced"
+                    :class="{
+                        'text-gray-500': cancelled,
+                    }"
+                    >Έχουν αντικατασταθεί</label
+                >
             </div>
 
             <div class="mt-4 bg-white rounded-md p-2 shadow-xl">
