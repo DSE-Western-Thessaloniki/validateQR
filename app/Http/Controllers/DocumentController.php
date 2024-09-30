@@ -36,20 +36,43 @@ class DocumentController extends Controller
         if (! is_string($filter)) {
             $filter = '';
         }
+        $cancelled = Request::input('cancelled', "false") === "true" ? true : false;
+
+        $replaced = Request::input('replaced', "false") === "true" ? true : false;
 
         $documents = Document::query()
             ->when($filter, function ($query) use ($filter) {
-                $query->where('id', 'LIKE', "%{$filter}%")
-                    ->orWhere('filename', 'LIKE', "%{$filter}%");
+                $query->where(function ($query) use ($filter) {
+                    $query->where('id', 'LIKE', "%{$filter}%")
+                        ->orWhere('filename', 'LIKE', "%{$filter}%");
+                });
+            })
+            ->when($cancelled, function ($query) {
+                $query->whereHas('extraState', function (Builder $query) {
+                    $query->where('extra_state', '1');
+                });
+            })
+            ->when($replaced, function ($query) {
+                $query->whereHas('extraState', function (Builder $query) {
+                    $query->where('extra_state', '2');
+                });
             })
             ->with(['documentGroup', 'extraState'])
             ->latest()
             ->paginate(15)
-            ->appends(['filter' => $filter]);
+            ->appends([
+                'filter' => $filter,
+                'cancelled' => $cancelled ? "true" : "false",
+               'replaced' => $replaced ? "true" : "false",
+            ]);
 
         return Inertia::render('Document/Index', [
             'documents' => $documents,
-            'filters' => ['filter' => $filter]
+            'filters' => [
+                'filter' => $filter,
+                'cancelled' => $cancelled,
+                'replaced' => $replaced,
+            ]
         ]);
     }
 
