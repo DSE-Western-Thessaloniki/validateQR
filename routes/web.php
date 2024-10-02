@@ -4,6 +4,7 @@ use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\DocumentGroupController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\UserController;
+use App\Models\Document;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
@@ -20,6 +21,18 @@ use Inertia\Inertia;
 |
 */
 
+$missingDocumentHandler = function (Request $request) {
+    $document_id = $request->route('document');
+    $ip_address = isset($_SERVER['HTTP_X_FORWARDED_FOR']) ?
+        "{$_SERVER['HTTP_X_FORWARDED_FOR']} -> {$_SERVER['REMOTE_ADDR']}" :
+        "{$_SERVER['REMOTE_ADDR']}";
+    Log::info("Το έγγραφο με id '{document_id}' δεν βρέθηκε. [{ip_address}]", [
+        'document_id' => $document_id,
+        'ip_address' => $ip_address
+    ]);
+    return Inertia::render('Error/DocumentNotFound');
+};
+
 Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
@@ -27,19 +40,13 @@ Route::get('/', function () {
 })->name('home');
 
 Route::middleware(['throttle:document'])
+    ->get('/document/{document}/download', [DocumentController::class, 'download'])->name('document.download')
+    ->missing($missingDocumentHandler);
+
+Route::middleware(['throttle:document'])
     ->resource('document', DocumentController::class)
     ->only(['show'])
-    ->missing(function (Request $request) {
-        $document_id = $request->route('document');
-        $ip_address = isset($_SERVER['HTTP_X_FORWARDED_FOR']) ?
-            "{$_SERVER['HTTP_X_FORWARDED_FOR']} -> {$_SERVER['REMOTE_ADDR']}" :
-            "{$_SERVER['REMOTE_ADDR']}";
-        Log::info("Το έγγραφο με id '{document_id}' δεν βρέθηκε. [{ip_address}]", [
-            'document_id' => $document_id,
-            'ip_address' => $ip_address
-        ]);
-        return Inertia::render('Error/DocumentNotFound');
-    });
+    ->missing($missingDocumentHandler);
 
 Route::middleware([
     'auth:sanctum',

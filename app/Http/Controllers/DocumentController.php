@@ -220,9 +220,17 @@ class DocumentController extends Controller
             return inertia('Error/DocumentNotFound');
         }
 
+        return Inertia::location(route('document.download', $document));
+    }
+
+    public function download(Document $document)
+    {
         return response()->download(
             storage_path("app"). "/{$document->document_group_id}/signed/{$document->id}.pdf",
-            "{$document->filename}"
+            "{$document->filename}",
+            [
+                'Cache-Control' => 'no-cache, must-revalidate'
+            ]
         );
     }
 
