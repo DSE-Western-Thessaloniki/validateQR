@@ -194,6 +194,17 @@ class DocumentController extends Controller
      */
     public function show(Document $document)
     {
+        if ($document->extraState?->extra_state === Document::ExtraStateCancelled) {
+            return inertia('Document/Cancelled')
+                ->with(compact('document'));
+        }
+
+        if ($document->extraState?->extra_state === Document::ExtraStateReplaced) {
+            return inertia('Document/Replaced')
+                ->with(compact('document'))
+                ->with('replacement', $document->extraState->extra_state_text);
+        }
+
         // Έλεγξε μήπως δεν έχει πάρει ψηφιακή υπογραφή ή το group δεν είναι δημοσιευμένο
         if (
             !file_exists(storage_path("app"). "/{$document->document_group_id}/signed/{$document->id}.pdf") ||
