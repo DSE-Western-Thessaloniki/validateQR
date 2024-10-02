@@ -225,6 +225,35 @@ class DocumentController extends Controller
 
     public function download(Document $document)
     {
+        // Κανονικά δεν θα έπρεπε να κάνουμε εκ νέου τους ελέγχους
+        // αλλά προσπαθούμε να αποφύγουμε την περίπτωση που για κάποιο λόγο
+        // κάποιος χρησιμοποιήσει το /download απευθείας
+        if ($document->extraState?->extra_state === Document::ExtraStateCancelled) {
+            return inertia('Document/Cancelled')
+                ->with(compact('document'));
+        }
+
+        if ($document->extraState?->extra_state === Document::ExtraStateReplaced) {
+            return inertia('Document/Replaced')
+                ->with(compact('document'))
+                ->with('replacement', $document->extraState->extra_state_text);
+        }
+
+        // Έλεγξε μήπως δεν έχει πάρει ψηφιακή υπογραφή ή το group δεν είναι δημοσιευμένο
+        if (
+            !file_exists(storage_path("app"). "/{$document->document_group_id}/signed/{$document->id}.pdf") ||
+            !$document->documentGroup->published
+            ) {
+            $ip_address = isset($_SERVER['HTTP_X_FORWARDED_FOR']) ?
+                "{$_SERVER['HTTP_X_FORWARDED_FOR']} -> {$_SERVER['REMOTE_ADDR']}" :
+                "{$_SERVER['REMOTE_ADDR']}";
+            Log::warning("Το έγγραφο με id '{document_id}' δεν έχει αποθηκευμένο αρχείο ή η ομάδα δεν είναι δημοσιευμένη. [{ip_address}]", [
+                'document_id' => $document->id,
+                'ip_address' => $ip_address
+            ]);
+            return inertia('Error/DocumentNotFound');
+        }
+
         return response()->download(
             storage_path("app"). "/{$document->document_group_id}/signed/{$document->id}.pdf",
             "{$document->filename}",
