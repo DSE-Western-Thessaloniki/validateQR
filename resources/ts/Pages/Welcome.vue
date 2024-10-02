@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import GuestLayout from "@/Layouts/GuestLayout.vue";
+import axios from "axios";
 import { ref } from "vue";
 import { route } from "ziggy-js";
+import { Link, router } from "@inertiajs/vue3";
 
 defineProps({
     canLogin: Boolean,
@@ -11,9 +13,11 @@ const form_document = ref("");
 
 const onKeyDown = (event: KeyboardEvent) => {
     if (event.key === "Enter") {
-        window.location.href = route("document.show", {
-            document: form_document.value,
-        });
+        router.get(
+            route("document.show", {
+                document: form_document.value,
+            })
+        );
     }
 };
 </script>
@@ -44,12 +48,13 @@ const onKeyDown = (event: KeyboardEvent) => {
                 @keydown="onKeyDown"
                 placeholder="Εισάγετε εδώ τον κωδικό του εγγράφου"
             />
-            <a
+            <Link
+                type="button"
                 class="inline-flex items-center px-4 py-2 bg-red-800 rounded-r-md font-semibold text-xs text-white tracking-widest hover:bg-red-600 disabled:opacity-25 disabled:bg-gray-500 transition"
                 :href="route('document.show', { document: form_document })"
             >
                 Αναζήτηση
-            </a>
+            </Link>
         </div>
     </GuestLayout>
 </template>
