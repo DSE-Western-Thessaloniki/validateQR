@@ -239,6 +239,32 @@ const page = usePage();
             <main>
                 <slot />
             </main>
+
+            <div class="footer text-black bg-white border-t-2 flex">
+                <div></div>
+                <div class="ms-auto">
+                    Σχεδίαση και υλοποίηση Ιντζόγλου Θεόφιλος - Διεύθυνση Δ.Ε.
+                    Δυτ. Θεσσαλονίκης
+                </div>
+                <span class="ms-auto text-red-800">{{
+                    page.props.app.name
+                }}</span>
+                &nbsp;
+                <span class="text-blue-800"
+                    >v.{{ page.props.app.version }}</span
+                >
+            </div>
         </div>
     </div>
 </template>
+
+<style>
+.footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 0.25rem;
+    text-align: center;
+}
+</style>

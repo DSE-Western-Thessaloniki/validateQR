@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import { Head, Link, router } from "@inertiajs/vue3";
+import { Head, Link, router, usePage } from "@inertiajs/vue3";
 import Banner from "@/Components/Banner.vue";
 import Dropdown from "@/Components/Dropdown.vue";
 import DropdownLink from "@/Components/DropdownLink.vue";
@@ -10,6 +10,8 @@ import ResponsiveNavLink from "@/Components/ResponsiveNavLink.vue";
 defineProps({
     title: String,
 });
+
+const page = usePage();
 
 const showingNavigationDropdown = ref(false);
 
@@ -524,6 +526,21 @@ const logout = () => {
                     <slot />
                 </main>
             </Transition>
+
+            <div class="footer text-black bg-white border-t-2 flex">
+                <div></div>
+                <div class="ms-auto">
+                    Σχεδίαση και υλοποίηση Ιντζόγλου Θεόφιλος - Διεύθυνση Δ.Ε.
+                    Δυτ. Θεσσαλονίκης
+                </div>
+                <span class="ms-auto text-red-800">{{
+                    page.props.app.name
+                }}</span>
+                &nbsp;
+                <span class="text-blue-800"
+                    >v.{{ page.props.app.version }}</span
+                >
+            </div>
         </div>
     </div>
 </template>
@@ -537,5 +554,14 @@ const logout = () => {
 .fade-enter-from,
 .fade-leave-to {
     opacity: 0;
+}
+
+.footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 0.25rem;
+    text-align: center;
 }
 </style>
