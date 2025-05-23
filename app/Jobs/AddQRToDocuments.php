@@ -55,7 +55,7 @@ class AddQRToDocuments implements ShouldQueue, ShouldBeUnique
             $output_filename = storage_path('app')."/{$this->documentGroup->id}/qr/{$document->id}.pdf";
             logger("Adding QR to {$filename}");
             $output = null;
-            $document_link = URL::to("/validateQR/document/{$document->id}");
+            $document_link = URL::to("/document/{$document->id}");
 
             // Δημιούργησε τον φάκελο qr μέσα στον φάκελο της ομάδας γιατί τον χρειαζόμαστε
             if (! file_exists(storage_path('app')."/{$this->documentGroup->id}/qr")) {
@@ -135,7 +135,7 @@ class AddQRToDocuments implements ShouldQueue, ShouldBeUnique
             ->annotate(5, 30, 'Για την επιβεβαίωση της γνησιότητας του εγγράφου', ['fontsize' => 16])
             ->annotate(5, 52, 'μπορείτε να σαρώσετε τον κωδικό στα αριστερά ή να κάνετε κλικ επάνω του', ['fontsize' => 16])
             ->annotate(5, 76, "ή να εισάγετε τον κωδικό {$document->id} στη σελίδα", ['fontsize' => 16])
-            ->annotate(5, 100, URL::to('/validateQR'),
+            ->annotate(5, 100, URL::to('/'),
                 ['fontsize' => 16, 'fontFamily' => 'Courier'])
             ->resource();
 
