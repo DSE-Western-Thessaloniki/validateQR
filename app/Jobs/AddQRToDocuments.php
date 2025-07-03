@@ -106,7 +106,11 @@ class AddQRToDocuments implements ShouldQueue, ShouldBeUnique
 
             unlink(storage_path('app')."/{$this->documentGroup->id}/qr/{$document->id}.png");
 
-            $document->state = Document::WithQR;
+            // Αν το έγγραφο είναι στην αρχική του κατάσταση σημείωσε ότι βάλαμε QR
+            if ($document->state === Document::InitialState) {
+                $document->state = Document::WithQR;
+            }
+
             $document->save();
 
             $this->documentGroup->job_status_text = sprintf('%.2f', $index / $documents->count() * 100).'%';
