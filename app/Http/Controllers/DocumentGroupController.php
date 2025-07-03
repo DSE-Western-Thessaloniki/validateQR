@@ -12,6 +12,7 @@ use App\Models\DocumentGroup;
 use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class DocumentGroupController extends Controller
@@ -123,6 +124,16 @@ class DocumentGroupController extends Controller
      */
     public function destroy(DocumentGroup $documentGroup)
     {
+        // Κάνε εκκαθάριση αρχείων και φακέλων που σχετίζονται με την ομάδα εγγράφων
+        $documentGroup->documents()->each(function (Document $document) use ($documentGroup) {
+            $document->extraState()->delete();
+            $document->delete();
+        });
+
+        // Διαγραφή του φακέλου της ομάδας εγγράφων
+        if (Storage::exists("{$documentGroup->id}")) {
+            Storage::deleteDirectory("{$documentGroup->id}");
+        }
         $documentGroup->delete();
 
         return to_route('documentGroup.index')
