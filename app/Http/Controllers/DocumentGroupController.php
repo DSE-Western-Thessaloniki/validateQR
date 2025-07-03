@@ -112,7 +112,9 @@ class DocumentGroupController extends Controller
         ]));
 
         // Αλλαγή βάσης μέτρησης από 0-4 σε 1-5
-        $documentGroup->step++;
+        if ($documentGroup->step === 0  ) {
+            $documentGroup->step++;
+        }
 
         $documentGroup->save();
 
@@ -169,6 +171,12 @@ class DocumentGroupController extends Controller
     public function togglePublished(DocumentGroup $documentGroup)
     {
         $documentGroup->published =! $documentGroup->published;
+
+        // Με τη δημοσίευση της ομάδας εγγράφων, ολοκληρώνεται η διαδικασία
+        if ($documentGroup->published) {
+            $documentGroup->step = 5;
+        }
+
         $documentGroup->save();
 
         return response()->json($documentGroup);

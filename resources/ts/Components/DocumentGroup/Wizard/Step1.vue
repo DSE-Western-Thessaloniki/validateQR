@@ -64,6 +64,11 @@ const save = () => {
                 if (response.status === 200) {
                     wizard.documentGroup = response.data;
 
+                    if (method === "put") {
+                        nameChanged = false; // Επανέφερε το σηματοδότη
+                    }
+
+                    console.log(`nameChanged: ${nameChanged}`);
                     // Εφόσον όλα πήγαν καλά άνοιξε το group για επεξεργασία
                     router.get(
                         route("documentGroup.edit", {

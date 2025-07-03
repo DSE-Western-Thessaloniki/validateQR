@@ -137,8 +137,10 @@ class DocumentController extends Controller
             }
         }
 
-        $documentGroup->step++;
-        $documentGroup->save();
+        if ($documentGroup->step === 1) {
+            $documentGroup->step++;
+            $documentGroup->save();
+        }
 
         if (count($alreadyExist) > 0) {
             // Επιστρέφει 210 όταν υπάρχουν ήδη έγγραφα με το ίδιο όνομα
@@ -191,7 +193,7 @@ class DocumentController extends Controller
             ->count();
 
         // Αν έχουμε υπογραφές για όλα τα έγγραφα, αύξησε το βήμα
-        if ($documentsWithoutSignature === 0) {
+        if ($documentsWithoutSignature === 0 && $documentGroup->step === 3) {
             $documentGroup->step++;
             $documentGroup->save();
         }
