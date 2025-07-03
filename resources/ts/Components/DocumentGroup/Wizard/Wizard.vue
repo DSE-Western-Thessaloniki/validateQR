@@ -20,6 +20,7 @@ import axios from "axios";
 import { intervalCollection } from "time-events-manager";
 import { route } from "ziggy-js";
 import { Link } from "@inertiajs/vue3";
+import ConfirmationModal from "@/Components/ConfirmationModal.vue";
 
 library.add(faChevronLeft, faChevronRight);
 
@@ -279,5 +280,27 @@ onBeforeUnmount(() => {
             Τέλος
             <FontAwesomeIcon :icon="faCheck" />
         </Link>
+        <ConfirmationModal
+            :show="wizard.confirmationModal.show"
+            :closeable="true"
+        >
+            <template #title>
+                {{ wizard.confirmationModal.title }}
+            </template>
+            <template #content>
+                <div
+                    v-html="wizard.confirmationModal.content"
+                    class="max-h-96 overflow-y-auto"
+                ></div>
+            </template>
+            <template #footer>
+                <button
+                    class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                    @click="wizard.confirmationModal.show = false"
+                >
+                    OK
+                </button>
+            </template>
+        </ConfirmationModal>
     </div>
 </template>
