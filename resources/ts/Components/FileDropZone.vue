@@ -83,6 +83,21 @@ const upload = () => {
             },
         })
         .then((response) => {
+            // Έλεγχος για απάντηση 210 (όταν υπήρχαν ήδη αρχεία)
+            if (response.status === 210) {
+                uploadButtonDisabled.value = false;
+                uploadButtonRef.value!.innerHTML = "Ανέβασμα αρχείων";
+                files.value = [];
+                emit("uploaded");
+                wizard.confirmationModal.show = true;
+                wizard.confirmationModal.title = "Αρχεία ήδη ανεβασμένα";
+                wizard.confirmationModal.content = `<p>Τα αρχεία με τα ονόματα:</p><br/><ul class="list-disc"><li>${response.data.existing.join(
+                    "</li><li>"
+                )}</li></ul><br/><p>είχαν ήδη ανέβει στην ομάδα εγγράφων και αγνοήθηκαν. Τα υπόλοιπα αρχεία έχουν ανέβει επιτυχώς.</p>`;
+                return;
+            }
+
+            // Έλεγχος για απάντηση 200 (όταν όλα πήγαν καλά)
             if (response.status === 200) {
                 uploadButtonDisabled.value = false;
                 uploadButtonRef.value!.innerHTML = "Ανέβασμα αρχείων";

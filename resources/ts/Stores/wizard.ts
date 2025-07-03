@@ -17,6 +17,11 @@ export const useWizardStore = defineStore("wizard", {
         totalStepsCompleted: number;
         processingDocuments: number;
         processingDocumentsProgress: string;
+        confirmationModal: {
+            show: boolean;
+            title: string;
+            content: string;
+        };
     } => {
         return {
             documentGroup: undefined,
@@ -27,6 +32,11 @@ export const useWizardStore = defineStore("wizard", {
             totalStepsCompleted: 0,
             processingDocuments: 0,
             processingDocumentsProgress: "",
+            confirmationModal: {
+                show: false,
+                title: "Test",
+                content: "This is a test confirmation modal",
+            },
         };
     },
 });

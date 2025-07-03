@@ -106,11 +106,24 @@ class DocumentController extends Controller
 
         $documentGroup = DocumentGroup::findOrFail($validated['document_group_id']);
 
+        $alreadyExist = [];
+
         if ($request->file('documents')) {
             foreach ($request->file('documents') as $file) {
                 $filename = mb_ereg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', $file->getClientOriginalName());
                 // Remove any runs of periods
                 $filename = mb_ereg_replace("([\.]{2,})", '', $filename);
+
+                // Έλεγξε αν υπάρχει ήδη έγγραφο με το ίδιο όνομα
+                $existingDocument = Document::where('document_group_id', $validated['document_group_id'])
+                        ->where('filename', $filename)
+                        ->first();
+                if ($existingDocument) {
+                    // Αν υπάρχει, απλά αγνόησέ το
+                    Log::info("Το έγγραφο με όνομα '{$filename}' έχει ήδη ανέβει στην ομάδα εγγράφων με id '{$validated['document_group_id']}'.");
+                    $alreadyExist[] = $filename;
+                    continue;
+                }
 
                 $document = Document::create([
                     'document_group_id' => $validated['document_group_id'],
@@ -126,6 +139,11 @@ class DocumentController extends Controller
 
         $documentGroup->step++;
         $documentGroup->save();
+
+        if (count($alreadyExist) > 0) {
+            // Επιστρέφει 210 όταν υπάρχουν ήδη έγγραφα με το ίδιο όνομα
+            return response()->json(['message' => 'Some documents already exist', 'existing' => $alreadyExist, 'uploaded' => $documents], 210);
+        }
 
         return response()->json($documents);
     }
