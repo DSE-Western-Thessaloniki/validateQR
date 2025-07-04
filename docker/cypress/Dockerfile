@@ -1,4 +1,4 @@
-FROM cypress/included:12.11.0
+FROM cypress/included:14.5.1
 
 ARG WWWGROUP
 ARG WWWUSER
