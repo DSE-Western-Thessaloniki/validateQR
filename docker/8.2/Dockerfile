@@ -7,7 +7,7 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN apt-get update \
     && apt-get install -y gnupg gosu curl ca-certificates zip unzip git supervisor sqlite3 libcap2-bin libpng-dev dnsutils \
-    libboost-program-options1.74.0 libmagick++-6.q16-9t64 libboost-program-options-dev libmagick++-dev cmake gcc build-essential libqrencode-dev libqrencode4 \
+    libboost-program-options1.83.0 libmagick++-6.q16-9t64 libboost-program-options-dev libmagick++-dev cmake gcc build-essential libqrencode-dev libqrencode4 \
     && apt-get -y autoremove \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
@@ -81,7 +81,7 @@ RUN apt-get update \
     && apt-get install -y yarn \
     && apt-get install -y mysql-client \
     && apt-get install -y postgresql-client-$POSTGRES_VERSION \
-    && apt-get install -y libmagick++-6.q16-9t64 libboost-program-options1.74.0 libqrencode4 \
+    && apt-get install -y libmagick++-6.q16-9t64 libboost-program-options1.83.0 libqrencode4 \
     && apt-get -y autoremove \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
