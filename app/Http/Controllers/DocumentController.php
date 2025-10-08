@@ -166,6 +166,8 @@ class DocumentController extends Controller
 
         $documentGroup = DocumentGroup::findOrFail($validated['document_group_id']);
 
+        $unmatchedSignedDocuments = [];
+
         if ($request->file('documents')) {
             foreach ($request->file('documents') as $file) {
                 $filename = $fileService->sanitizeFilename($file->getClientOriginalName());
@@ -179,6 +181,7 @@ class DocumentController extends Controller
 
                 // Αν δεν έχει ανέβει ήδη το σχετικό έγγραφο απλά αγνόησέ το
                 if (!$document) {
+                    $unmatchedSignedDocuments[] = $filename;
                     continue;
                 }
 
@@ -200,6 +203,13 @@ class DocumentController extends Controller
         if ($documentsWithoutSignature === 0 && $documentGroup->step === 3) {
             $documentGroup->step++;
             $documentGroup->save();
+        }
+
+        if (count($unmatchedSignedDocuments)) {
+            // Επιστρέφει 211 όταν υπάρχουν έγγραφα που δεν ταίριαξαν με κάποιο
+            // από τα ήδη ανεβασμένα στην ομάδα
+            return response()->json(['message' => 'Some signed documents did not match to the documents in the group', 'not_matching' => $unmatchedSignedDocuments], 211);
+
         }
 
         return response()->json($documents);

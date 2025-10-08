@@ -97,6 +97,22 @@ const upload = () => {
                 return;
             }
 
+            // Έλεγχος για απάντηση 211 (όταν υπογεγραμμένα έγγραφα δεν ταίριαξαν με κάποιο έγγραφο της ομάδας)
+            if (response.status === 211) {
+                uploadButtonDisabled.value = false;
+                uploadButtonRef.value!.innerHTML = "Ανέβασμα αρχείων";
+                files.value = [];
+                emit("uploaded");
+                wizard.confirmationModal.show = true;
+                wizard.confirmationModal.title =
+                    "Αρχεία που δεν ταίριαξαν με κάποιο από τα έγγραφα της ομάδας";
+                wizard.confirmationModal.content = `<p>Τα αρχεία με τα ονόματα:</p><br/><ul class="list-disc"><li>${response.data.not_matching.join(
+                    "</li><li>"
+                )}</li></ul><br/><p>δεν ταίριαξαν με κάποια από τα έγγραφα της ομάδας και αγνοήθηκαν. Τα υπόλοιπα αρχεία έχουν ανέβει επιτυχώς.</p>`;
+                console.log(response.data);
+                return;
+            }
+
             // Έλεγχος για απάντηση 200 (όταν όλα πήγαν καλά)
             if (response.status === 200) {
                 uploadButtonDisabled.value = false;
