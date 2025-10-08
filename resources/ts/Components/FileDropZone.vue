@@ -2,39 +2,89 @@
 import { ref } from "vue";
 import type { Ref } from "vue";
 import { humanReadableFileSize } from "@/tools";
-import axios from "axios";
-import { isLaravelValidationError } from "@/laravel-validation-error";
-import { useWizardStore } from "@/Stores/wizard";
+import axios, { type AxiosResponse } from "axios";
 
-const wizard = useWizardStore();
+type FormDataObjectValueType = string | Blob | [Blob, string];
+
+type FormDataObjectType = Record<string, FormDataObjectValueType>;
 
 const props = withDefaults(
     defineProps<{
-        url: string;
+        url?: string;
+        name?: string;
+        autoupload?: boolean;
+        multiple?: boolean;
+        appendFormData?: FormDataObjectType;
     }>(),
     {
         url: "",
+        name: "file",
+        autoupload: false,
+        multiple: true,
     }
 );
 
-const emit = defineEmits(["uploaded"]);
+const emit = defineEmits<{
+    uploaded: [response: AxiosResponse];
+    error: [error: unknown];
+}>();
+
+const onDragEnter = (event: DragEvent) => {
+    if (!event.dataTransfer) {
+        return;
+    }
+
+    if (!props.multiple && event.dataTransfer.items.length > 1) {
+        event.dataTransfer.dropEffect = "none";
+        invalidDrop.value = true;
+    } else {
+        dragged.value = true;
+        invalidDrop.value = false;
+    }
+};
+
+const onDragOver = (event: DragEvent) => {
+    if (!event.dataTransfer) {
+        return;
+    }
+
+    if (!props.multiple && event.dataTransfer.items.length > 1) {
+        event.dataTransfer.dropEffect = "none";
+    } else {
+        event.dataTransfer.dropEffect = "copy";
+    }
+};
 
 const onDrop = (event: DragEvent) => {
     dragged.value = false;
+    invalidDrop.value = false;
 
     if (!event.dataTransfer) {
+        return;
+    }
+
+    if (!props.multiple && event.dataTransfer.files.length > 1) {
         return;
     }
 
     for (const file of event.dataTransfer.files) {
         files.value.push(file);
     }
+
+    if (props.autoupload) {
+        upload();
+    }
+};
+
+const onDragLeave = () => {
+    dragged.value = false;
+    invalidDrop.value = false;
 };
 
 const onClick = (event: Event) => {
     let input = document.createElement("input");
     input.type = "file";
-    input.multiple = true;
+    input.multiple = props.multiple;
 
     input.onchange = (e) => {
         if (
@@ -42,8 +92,15 @@ const onClick = (event: Event) => {
             e.target !== null &&
             (e.target as HTMLInputElement).files !== null
         ) {
-            for (const file of (e.target as HTMLInputElement).files) {
-                files.value.push(file);
+            const inputFiles = (e.target as HTMLInputElement).files;
+            if (inputFiles) {
+                for (const file of inputFiles) {
+                    files.value.push(file);
+                }
+            }
+
+            if (props.autoupload) {
+                upload();
             }
         }
     };
@@ -63,9 +120,25 @@ const upload = () => {
 
     const formData = new FormData();
     files.value.forEach((file) => {
-        formData.append("documents[]", file);
+        formData.append(props.name + "[]", file);
     });
-    formData.append("document_group_id", `${wizard?.documentGroup?.id}`);
+    if (typeof props.appendFormData !== "undefined") {
+        Object.keys(props.appendFormData).forEach((key) => {
+            // @ts-expect-error props.appendFormData is not undefined
+            if (Array.isArray(props.appendFormData[key])) {
+                formData.append(
+                    key,
+                    // @ts-expect-error props.appendFormData is not undefined
+                    props.appendFormData[key][0],
+                    // @ts-expect-error props.appendFormData is not undefined
+                    props.appendFormData[key][1]
+                );
+            } else {
+                // @ts-expect-error props.appendFormData is not undefined
+                formData.append(key, props.appendFormData[key]);
+            }
+        });
+    }
 
     uploadButtonDisabled.value = true;
 
@@ -83,59 +156,19 @@ const upload = () => {
             },
         })
         .then((response) => {
-            // Έλεγχος για απάντηση 210 (όταν υπήρχαν ήδη αρχεία)
-            if (response.status === 210) {
-                uploadButtonDisabled.value = false;
-                uploadButtonRef.value!.innerHTML = "Ανέβασμα αρχείων";
-                files.value = [];
-                emit("uploaded");
-                wizard.confirmationModal.show = true;
-                wizard.confirmationModal.title = "Αρχεία ήδη ανεβασμένα";
-                wizard.confirmationModal.content = `<p>Τα αρχεία με τα ονόματα:</p><br/><ul class="list-disc"><li>${response.data.existing.join(
-                    "</li><li>"
-                )}</li></ul><br/><p>είχαν ήδη ανέβει στην ομάδα εγγράφων και αγνοήθηκαν. Τα υπόλοιπα αρχεία έχουν ανέβει επιτυχώς.</p>`;
-                return;
-            }
-
-            // Έλεγχος για απάντηση 211 (όταν υπογεγραμμένα έγγραφα δεν ταίριαξαν με κάποιο έγγραφο της ομάδας)
-            if (response.status === 211) {
-                uploadButtonDisabled.value = false;
-                uploadButtonRef.value!.innerHTML = "Ανέβασμα αρχείων";
-                files.value = [];
-                emit("uploaded");
-                wizard.confirmationModal.show = true;
-                wizard.confirmationModal.title =
-                    "Αρχεία που δεν ταίριαξαν με κάποιο από τα έγγραφα της ομάδας";
-                wizard.confirmationModal.content = `<p>Τα αρχεία με τα ονόματα:</p><br/><ul class="list-disc"><li>${response.data.not_matching.join(
-                    "</li><li>"
-                )}</li></ul><br/><p>δεν ταίριαξαν με κάποια από τα έγγραφα της ομάδας και αγνοήθηκαν. Τα υπόλοιπα αρχεία έχουν ανέβει επιτυχώς.</p>`;
-                console.log(response.data);
-                return;
-            }
-
-            // Έλεγχος για απάντηση 200 (όταν όλα πήγαν καλά)
-            if (response.status === 200) {
-                uploadButtonDisabled.value = false;
-                uploadButtonRef.value!.innerHTML = "Ανέβασμα αρχείων";
-                files.value = [];
-                emit("uploaded");
-            }
+            // Πήραμε απάντηση 2XX (όλα πήγαν καλά)
+            uploadButtonDisabled.value = false;
+            uploadButtonRef.value!.innerHTML = "Ανέβασμα αρχείων";
+            files.value = [];
+            emit("uploaded", response);
         })
         .catch((error: unknown) => {
-            let errors: Array<String> = [];
-
-            if (isLaravelValidationError(error)) {
-                wizard.validationErrors = error.response.data.errors;
-                errors.push(error.response.data.message);
-            } else if (error instanceof Error) {
-                errors.push(error.message);
-            } else {
-                errors.push("Γενικό σφάλμα αποθήκευσης!");
-            }
+            emit("error", error);
         });
 };
 
 const dragged = ref(false);
+const invalidDrop = ref(false);
 
 const files: Ref<File[]> = ref([]);
 
@@ -149,24 +182,33 @@ const uploadButtonDisabled: Ref<boolean> = ref(false);
         class="cursor-pointer m-3 p-2 w-full h-64 bg-indigo-500 flex flex-col items-center justify-center rounded border-2 border-indigo-700 shadow-2xl"
         :class="{ 'bg-indigo-100': dragged }"
         @drop.prevent="onDrop"
-        @dragenter.prevent="dragged = true"
-        @dragover.prevent
-        @dragend="dragged = false"
-        @dragleave="dragged = false"
+        @dragenter.prevent="onDragEnter"
+        @dragover.prevent="onDragOver"
+        @dragend="onDragLeave"
+        @dragleave="onDragLeave"
         @click="onClick"
     >
         <span
             class="text-white text-center pointer-events-none"
-            v-if="!dragged"
+            v-if="!dragged && !invalidDrop"
         >
             Σύρετε τα αρχεία εδώ μέσα ή πατήστε για να εμφανιστεί το παράθυρο
             διαλόγου
         </span>
-        <span class="text-black text-center pointer-events-none" v-if="dragged">
+        <span
+            class="text-black text-center pointer-events-none"
+            v-if="dragged && !invalidDrop"
+        >
             Αφήστε τα αρχεία εδώ μέσα για να προστεθούν στην ομάδα
         </span>
+        <span
+            class="text-red-700 text-center pointer-events-none font-bold"
+            v-if="invalidDrop"
+        >
+            ⛔ Μόνο ένα αρχείο επιτρέπεται
+        </span>
     </div>
-    <div v-if="files.length" class="flex flex-col w-full mt-2">
+    <div v-if="!autoupload && files.length" class="flex flex-col w-full mt-2">
         <div class="h-48 overflow-y-auto">
             <div
                 v-for="(file, index) in files"

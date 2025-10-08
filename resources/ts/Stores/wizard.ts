@@ -1,4 +1,7 @@
-import type { LaravelValidationError } from "@/laravel-validation-error";
+import {
+    isLaravelValidationError,
+    type LaravelValidationError,
+} from "@/laravel-validation-error";
 import { defineStore } from "pinia";
 
 export const useWizardStore = defineStore("wizard", {
@@ -38,5 +41,19 @@ export const useWizardStore = defineStore("wizard", {
                 content: "This is a test confirmation modal",
             },
         };
+    },
+    actions: {
+        handleAxiosError(error: unknown) {
+            let errors: Array<String> = [];
+
+            if (isLaravelValidationError(error)) {
+                this.validationErrors = error.response.data.errors;
+                errors.push(error.response.data.message);
+            } else if (error instanceof Error) {
+                errors.push(error.message);
+            } else {
+                errors.push("Γενικό σφάλμα αποθήκευσης!");
+            }
+        },
     },
 });

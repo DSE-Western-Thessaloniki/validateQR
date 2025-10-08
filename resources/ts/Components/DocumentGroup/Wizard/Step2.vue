@@ -3,13 +3,14 @@ import { useWizardStore } from "@/Stores/wizard";
 import FileDropZone from "@/Components/FileDropZone.vue";
 import { getDocuments } from "./utilities";
 import { route } from "ziggy-js";
+import type { AxiosResponse } from "axios";
 
 const wizard = useWizardStore();
 
 // Κάνε έλεγχο μήπως έχουμε ήδη ολοκληρώσει το βήμα
 wizard.stepCompleted = wizard.documents !== undefined;
 
-const updateDocumentView = async () => {
+const updateDocumentView = async (response: AxiosResponse) => {
     const d = await getDocuments(wizard.documentGroup!.id);
 
     if (Array.isArray(d.documents)) {
@@ -17,6 +18,15 @@ const updateDocumentView = async () => {
         if (wizard.documents!.length > 0) {
             wizard.stepCompleted = true;
         }
+    }
+
+    // Έλεγχος για απάντηση 210 (όταν υπήρχαν ήδη αρχεία)
+    if (response.status === 210) {
+        wizard.confirmationModal.show = true;
+        wizard.confirmationModal.title = "Αρχεία ήδη ανεβασμένα";
+        wizard.confirmationModal.content = `<p>Τα αρχεία με τα ονόματα:</p><br/><ul class="list-disc"><li>${response.data.existing.join(
+            "</li><li>"
+        )}</li></ul><br/><p>είχαν ήδη ανέβει στην ομάδα εγγράφων και αγνοήθηκαν. Τα υπόλοιπα αρχεία έχουν ανέβει επιτυχώς.</p>`;
     }
 };
 
@@ -58,6 +68,11 @@ defineExpose({ save });
         <FileDropZone
             :url="route('document.storeMany')"
             @uploaded="updateDocumentView"
+            name="documents"
+            :append-form-data="{
+                document_group_id: `${wizard?.documentGroup?.id}`,
+            }"
+            @error="wizard.handleAxiosError"
         />
     </div>
 </template>

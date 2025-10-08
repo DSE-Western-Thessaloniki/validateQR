@@ -5,6 +5,7 @@ import { route } from "ziggy-js";
 import { faKey, faUnlockKeyhole } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { getDocuments } from "./utilities";
+import type { AxiosResponse } from "axios";
 
 const wizard = useWizardStore();
 
@@ -25,7 +26,7 @@ wizard.stepCompleted =
     wizard.documents?.length !== 0 &&
     wizard.documentGroup?.job_status === 2;
 
-const updateDocumentView = async () => {
+const updateDocumentView = async (response: AxiosResponse) => {
     const d = await getDocuments(wizard.documentGroup!.id);
 
     if (Array.isArray(d.documents)) {
@@ -33,6 +34,17 @@ const updateDocumentView = async () => {
         if (wizard.documents!.length > 0) {
             wizard.stepCompleted = true;
         }
+    }
+
+    // Έλεγχος για απάντηση 211 (όταν υπογεγραμμένα έγγραφα δεν ταίριαξαν με κάποιο έγγραφο της ομάδας)
+    if (response.status === 211) {
+        wizard.confirmationModal.show = true;
+        wizard.confirmationModal.title =
+            "Αρχεία που δεν ταίριαξαν με κάποιο από τα έγγραφα της ομάδας";
+        wizard.confirmationModal.content = `<p>Τα αρχεία με τα ονόματα:</p><br/><ul class="list-disc"><li>${response.data.not_matching.join(
+            "</li><li>"
+        )}</li></ul><br/><p>δεν ταίριαξαν με κάποια από τα έγγραφα της ομάδας και αγνοήθηκαν. Τα υπόλοιπα αρχεία έχουν ανέβει επιτυχώς.</p>`;
+        console.log(response.data);
     }
 };
 
@@ -82,6 +94,11 @@ defineExpose({ save });
         <FileDropZone
             :url="route('document.storeManySigned')"
             @uploaded="updateDocumentView"
+            name="documents"
+            :append-form-data="{
+                document_group_id: `${wizard?.documentGroup?.id}`,
+            }"
+            @error="wizard.handleAxiosError"
         />
     </div>
 </template>
