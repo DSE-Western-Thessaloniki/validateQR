@@ -101,11 +101,7 @@ const onRestoreStateButtonClick = () => {
 
 const page = usePage<PageWithFlashProps & PageWithAuthProps>();
 
-console.log("newDocument prop:", props.newDocument);
-
 const replaceAlt = ref(false);
-
-console.log("replaceAlt initial value:", replaceAlt.value);
 </script>
 
 <template>
