@@ -95,7 +95,12 @@ class ZipDocumentGroup implements ShouldQueue, ShouldBeUnique
 
         $this->documentGroup->job_status = DocumentGroup::JobFinished;
         $this->documentGroup->job_status_text = 'Ολοκληρώθηκε';
-        $this->documentGroup->step = 3;
+
+        // Μην αλλάζεις το βήμα αν έχει ήδη ολοκληρωθεί η διαδικασία
+        if ($this->documentGroup->step < 3) {
+            $this->documentGroup->step = 3;
+        }
+
         $this->documentGroup->save();
     }
 
