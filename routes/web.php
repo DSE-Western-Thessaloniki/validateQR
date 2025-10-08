@@ -61,8 +61,11 @@ Route::middleware([
     Route::post('/document/storeManySigned', [DocumentController::class, 'storeManySigned'])->name('document.storeManySigned');
     Route::get('/document/{document}/showAdmin', [DocumentController::class, 'adminShow'])->name('document.adminShow');
     Route::post('/document/{document}/cancel', [DocumentController::class, 'cancel'])->name('document.cancel');
-    Route::post('/document/{document}/replace', [DocumentController::class, 'replace'])->name('document.replace');
+    Route::post('/document/{document}/replaceWithId', [DocumentController::class, 'replaceWithId'])->name('document.replaceWithId');
+    Route::post('/document/{document}/replaceWithFile', [DocumentController::class, 'replaceWithFile'])->name('document.replaceWithFile');
     Route::post('/document/{document}/restoreState', [DocumentController::class, 'restoreState'])->name('document.restoreState');
+    Route::get('/document/{document}/withQR', [DocumentController::class, 'downloadWithQR'])->name('document.downloadWithQR');
+    Route::post('/document/{document}/storeSigned', [DocumentController::class, 'storeSigned'])->name('document.storeSigned');
     Route::resource('document', DocumentController::class)->only(['index', 'store']);
 
     Route::post('/documentGroup/{documentGroup}/addQR', [DocumentGroupController::class, 'addQR'])->name('documentGroup.addQR');

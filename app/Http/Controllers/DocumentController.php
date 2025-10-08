@@ -2,19 +2,27 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ReplaceWithFileRequest;
 use App\Http\Requests\StoreDocumentRequest;
 use App\Http\Requests\StoreManyDocumentsRequest;
+use App\Http\Requests\StoreSignedDocumentRequest;
 use App\Http\Requests\UpdateDocumentRequest;
 use App\Models\Document;
 use App\Models\DocumentExtraState;
 use App\Models\DocumentGroup;
+use App\Services\FileService;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\InvalidCastException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request as HttpRequest;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
 use Inertia\Inertia;
+use Inertia\Response;
+use InvalidArgumentException;
 
 class DocumentController extends Controller
 {
@@ -96,7 +104,7 @@ class DocumentController extends Controller
         return response()->json($document);
     }
 
-    public function storeMany(StoreManyDocumentsRequest $request)
+    public function storeMany(StoreManyDocumentsRequest $request, FileService $fileService)
     {
         Gate::authorize("create", Document::class);
 
@@ -110,9 +118,7 @@ class DocumentController extends Controller
 
         if ($request->file('documents')) {
             foreach ($request->file('documents') as $file) {
-                $filename = mb_ereg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', $file->getClientOriginalName());
-                // Remove any runs of periods
-                $filename = mb_ereg_replace("([\.]{2,})", '', $filename);
+                $filename = $fileService->sanitizeFilename($file->getClientOriginalName());
 
                 // Έλεγξε αν υπάρχει ήδη έγγραφο με το ίδιο όνομα
                 $existingDocument = Document::where('document_group_id', $validated['document_group_id'])
@@ -128,7 +134,7 @@ class DocumentController extends Controller
                 $document = Document::create([
                     'document_group_id' => $validated['document_group_id'],
                     'filename' => $filename,
-                    'state' => 0,
+                    'state' => Document::InitialState,
                 ]);
 
                 $file->storeAs($validated['document_group_id'], "{$document->id}.pdf");
@@ -150,7 +156,7 @@ class DocumentController extends Controller
         return response()->json($documents);
     }
 
-    public function storeManySigned(StoreManyDocumentsRequest $request)
+    public function storeManySigned(StoreManyDocumentsRequest $request, FileService $fileService)
     {
         Gate::authorize("create", Document::class);
 
@@ -162,9 +168,7 @@ class DocumentController extends Controller
 
         if ($request->file('documents')) {
             foreach ($request->file('documents') as $file) {
-                $filename = mb_ereg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', $file->getClientOriginalName());
-                // Remove any runs of periods
-                $filename = mb_ereg_replace("([\.]{2,})", '', $filename);
+                $filename = $fileService->sanitizeFilename($file->getClientOriginalName());
 
                 $document = Document::where('document_group_id', $validated['document_group_id'])
                     ->where(function (Builder $query) use ($filename) {
@@ -339,7 +343,7 @@ class DocumentController extends Controller
         return response()->json(['result' => 'OK']);
     }
 
-    public function replace(Document $document, HttpRequest $request)
+    public function replaceWithId(Document $document, HttpRequest $request)
     {
         $validated = $request->validate([
             'replacement' => ['required','string']
@@ -369,5 +373,81 @@ class DocumentController extends Controller
         }
 
         return response()->json(['result' => 'OK']);
+    }
+
+    public function replaceWithFile(Document $document, ReplaceWithFileRequest $request, FileService $fileService)
+    {
+        Gate::authorize("create", Document::class);
+
+        /** @var UploadedFile */
+        $file = $request->file('file');
+        $filename = $fileService->sanitizeFilename($file->getClientOriginalName());
+
+        /** @var \App\Models\Document */
+        $newDocument = Document::create([
+            'document_group_id' => $document->documentGroup->id,
+            'filename' => $filename,
+            'state' => Document::InitialState,
+        ]);
+
+        $file->storeAs($document->documentGroup->id, "{$newDocument->id}.pdf");
+
+        $document->load('documentGroup', 'extraState');
+        $newDocument->load('documentGroup', 'extraState');
+
+        $result = $newDocument->addQR();
+
+        if (!$result['ok']) {
+            return Inertia::render('Document/Show')
+                ->with(compact('document'))
+                ->with('flash.danger', "Απέτυχε η δημιουργία QR για το αρχείο:\n{$result['output']}");
+        }
+
+        return Inertia::render('Document/Show')
+            ->with(compact('document', 'newDocument'));
+    }
+
+    public function downloadWithQR(Document $document)
+    {
+        Gate::authorize("create", Document::class);
+
+        return response()->download(
+            storage_path("app"). "/{$document->document_group_id}/qr/{$document->id}.pdf",
+            "{$document->filename}",
+            [
+                'Cache-Control' => 'no-cache, must-revalidate'
+            ]
+        );
+    }
+
+    /**
+     * Αποθηκεύει το υπογεγραμμένο έγγραφο κατά την αντικατάσταση ενός εγγράφου
+     * από κάποιο νεότερο.
+     */
+    public function storeSigned(Document $document, StoreSignedDocumentRequest $request)
+    {
+        Gate::authorize("create", Document::class);
+
+        $replacedDocument = Document::findOrFail($request->validated('replaces'));
+
+        $request->file('signedFile')
+            ->storeAs($document->documentGroup->id . '/signed/', "{$document->id}.pdf");
+
+        $document->state = Document::WithQRAndSignature;
+        $document->save();
+
+        if ($replacedDocument->extraState) {
+            $replacedDocument->extraState->extra_state = Document::ExtraStateReplaced;
+            $replacedDocument->extraState->extra_state_text = $document->id;
+            $replacedDocument->extraState->save();
+        } else {
+            $extraState = new DocumentExtraState([
+                'extra_state' => Document::ExtraStateReplaced,
+                'extra_state_text' => $document->id,
+            ]);
+            $replacedDocument->extraState()->save($extraState);
+        }
+
+        return to_route('document.adminShow', $replacedDocument);
     }
 }
