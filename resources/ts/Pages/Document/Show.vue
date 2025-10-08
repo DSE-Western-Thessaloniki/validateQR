@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import FileDropZone from "@/Components/FileDropZone.vue";
 import AppLayoutNoTransition from "@/Layouts/AppLayoutNoTransition.vue";
 import { isDocumentCanceled, isDocumentReplaced } from "@/tools";
 import { faCancel, faCopy } from "@fortawesome/free-solid-svg-icons";
